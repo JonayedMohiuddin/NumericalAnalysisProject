@@ -1,0 +1,12 @@
+case6024 = case3012wp x 2
+case6243 = case3375wp + case2869pegase
+case6748 = case3375wp x 2
+case7092 = case2869pegase x 2 + case1354pegase
+case9961 = case2869pegase x 3 + case1345pegase
+case10595 = case9241pegase + case1354pegase
+case12110 = case9241pegase + case2869pegase
+case18482 = case9241pegase x 2
+case27318 = case13659pegase x 2
+case36964 = case9241pegase x 4
+case54636 = case13659pegase x 4
+case109272 = case13659pegase x 8
