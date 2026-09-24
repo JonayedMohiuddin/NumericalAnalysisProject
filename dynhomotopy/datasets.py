@@ -36,9 +36,25 @@ SYSTEMS = {s.name: s for s in [
     System("case_ACTIVSg2000limit", "case2000limit", "lim", "limit", LIMIT_CASES_RECORD),
 ]}
 
+# Other cases from the same two Zenodo records. The paper does not use them;
+# we use them as a wider test bed when comparing modifications of the method.
+EXTRA_ILL = ["case6024", "case6243", "case6748", "case7092", "case9961", "case10595", "case12110"]
+EXTRA_LIMIT = [
+    "case14limit", "case_ieee30limit", "case57limit", "case89pegaselimit", "case118limit",
+    "case300limit", "case1354pegaselimit", "case2383wplimit", "case2736splimit",
+    "case2737soplimit", "case2746woplimit", "case2746wplimit", "case2869pegaselimit",
+    "case3012wplimit", "case3120splimit", "case3375wplimit", "case9241pegaselimit",
+    "case13659pegaselimit",
+]
+for _name in EXTRA_ILL:
+    SYSTEMS[_name] = System(_name, _name, _name, "extra", ILL_CONDITIONED_RECORD)
+for _name in EXTRA_LIMIT:
+    SYSTEMS[_name] = System(_name, _name, _name, "extra", LIMIT_CASES_RECORD)
+
 ILL_CONDITIONED = [s.name for s in SYSTEMS.values() if s.kind == "ill"]
 LIMIT = [s.name for s in SYSTEMS.values() if s.kind == "limit"]
 ALL = ILL_CONDITIONED + LIMIT
+EXTRA = EXTRA_ILL + EXTRA_LIMIT
 
 
 def case_path(name):

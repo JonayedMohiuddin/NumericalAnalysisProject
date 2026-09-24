@@ -6,6 +6,7 @@ from dynhomotopy.homotopy import integrate, pathway
 from dynhomotopy.hybrid import solve_hybrid
 from dynhomotopy.problem import TutorialProblem
 from dynhomotopy.solvers import fast_decoupled_xb, newton_raphson
+from dynhomotopy.solvers.newton import optimal_multiplier
 
 
 @pytest.mark.parametrize("name", ["case69limit", "case_ACTIVSg500limit"])
@@ -56,6 +57,22 @@ def test_table4_row_for_2000_bus_case():
     assert res.refine.iterations == 3
     for a, b in zip(ours, paper):
         assert abs(np.log10(a) - np.log10(b)) < 0.1
+
+
+def test_optimal_multiplier():
+    a = np.array([1.0, -2.0])
+    # linear problem: the full Newton step solves it, so mu = 1
+    assert optimal_multiplier(a, np.zeros(2)) == pytest.approx(1.0)
+    # overshooting step (mismatch flips sign and grows): mu < 1
+    assert optimal_multiplier(a, -3 * a) < 1
+
+
+def test_adaptive_path_equals_fixed_path_when_jump_is_accepted():
+    pf = load_problem("case_ACTIVSg500limit")
+    fixed = solve_hybrid(pf, pf.flat_start(), 1e-4, [0, 0.005, 1.0])
+    adaptive = solve_hybrid(pf, pf.flat_start(), 1e-4, [0, 0.005, 1.0], adaptive=True)
+    assert adaptive.trajectory.times == [0.0, 0.005, 1.0]
+    assert np.allclose(adaptive.trajectory.x_final, fixed.trajectory.x_final)
 
 
 def test_fdxb():

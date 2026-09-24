@@ -1,0 +1,38 @@
+**Setting S1: total LU factorizations per case, or fail**
+
+| case | NR flat | BE (paper) | BE-chord | BE-PC | BE + OM | BE-PC + OM | RK4 | adaptive BE | adaptive BE-PC | Newton homotopy | scaled K |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| case18482 | no | 6 | 6 | 6 | 5 | 6 | fail | 6 | 6 | fail | 6 |
+| case27318 | no | 6 | 7 | 6 | 6 | 6 | fail | 6 | 6 | 8 | 6 |
+| case36964 | no | 6 | fail | 6 | 6 | 6 | fail | 6 | 6 | fail | 6 |
+| case54636 | no | 6 | 7 | 6 | 6 | 6 | fail | 6 | 6 | 8 | 6 |
+| case109272 | no | 6 | 12 | 6 | 6 | 6 | fail | 6 | 6 | 8 | 6 |
+| case69limit | yes | 3 | 3 | 4 | 3 | 4 | 7 | 3 | 3 | 3 | 3 |
+| case141limit | yes | 3 | 3 | 4 | 3 | 4 | 7 | 3 | 3 | 3 | 3 |
+| case_ACTIVSg500limit | yes | 4 | 5 | 5 | 4 | 5 | fail | 4 | 4 | 5 | 4 |
+| case_ACTIVSg2000limit | yes | 5 | 6 | 6 | 5 | 6 | fail | 14 | 5 | 6 | 5 |
+| case6024 | no | fail | fail | fail | fail | fail | fail | fail | fail | fail | fail |
+| case6243 | no | 6 | fail | 6 | 6 | 6 | fail | 6 | 6 | fail | 6 |
+| case6748 | no | fail | fail | fail | fail | fail | fail | 19 | fail | fail | fail |
+| case7092 | no | 6 | 7 | 6 | 6 | 6 | fail | 6 | 6 | fail | 6 |
+| case9961 | no | 6 | 7 | 6 | 6 | 6 | fail | 6 | 6 | fail | 6 |
+| case10595 | no | 6 | 6 | 6 | 5 | 6 | fail | 6 | 6 | fail | 6 |
+| case12110 | no | 5 | 6 | 6 | 5 | 6 | fail | 5 | 5 | fail | 6 |
+| case14limit | no | fail | fail | 13 | 10 | 10 | fail | fail | 13 | fail | fail |
+| case_ieee30limit | yes | 10 | 11 | 11 | 9 | 9 | fail | 10 | 10 | 11 | 10 |
+| case57limit | yes | 11 | 11 | 11 | 9 | 9 | fail | 11 | 11 | 11 | 10 |
+| case89pegaselimit | no | 11 | 12 | 11 | 9 | 9 | fail | 11 | 11 | 12 | 11 |
+| case118limit | yes | 10 | 11 | 11 | 9 | 9 | fail | 10 | 10 | 11 | 10 |
+| case300limit | yes | 10 | 11 | 11 | 8 | 9 | fail | 10 | 10 | 11 | 10 |
+| case1354pegaselimit | no | 12 | 12 | 12 | 9 | 10 | fail | 12 | 12 | 12 | 12 |
+| case2383wplimit | yes | 10 | 11 | 11 | 9 | 10 | fail | 10 | 10 | 11 | 10 |
+| case2736splimit | no | fail | fail | 13 | 11 | 9 | fail | fail | 13 | fail | fail |
+| case2737soplimit | no | 12 | fail | 12 | 10 | 10 | fail | 12 | 12 | fail | 12 |
+| case2746woplimit | no | 12 | 12 | 12 | 10 | 10 | fail | 12 | 12 | fail | 12 |
+| case2746wplimit | no | 12 | fail | 12 | 10 | 10 | fail | 12 | 12 | fail | 12 |
+| case2869pegaselimit | yes | 10 | 11 | 11 | 9 | 10 | fail | 10 | 10 | 11 | 10 |
+| case3012wplimit | no | 12 | fail | 11 | 11 | 10 | fail | 19 | 12 | fail | 12 |
+| case3120splimit | no | 12 | fail | 12 | 10 | 10 | fail | 12 | 12 | fail | 12 |
+| case3375wplimit | no | 12 | 12 | 11 | 10 | 9 | fail | 12 | 12 | fail | 12 |
+| case9241pegaselimit | no | 11 | 11 | 11 | 9 | 10 | fail | 11 | 11 | 12 | 11 |
+| case13659pegaselimit | yes | 8 | 10 | 9 | 8 | 8 | fail | 8 | 8 | 9 | 8 |

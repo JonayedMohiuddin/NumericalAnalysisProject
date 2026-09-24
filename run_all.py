@@ -23,13 +23,14 @@ EXPERIMENTS = [
     ("exp08_fig5", "Figure 5"),
     ("exp09_table7", "Table 7"),
     ("exp10_table8", "Table 8"),
+    ("exp11_modifications", "Our study: modifications of the method"),
 ]
 TIMED = {"exp06_fig3_table6", "exp10_table8"}
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--only", nargs="*", type=int, help="experiment numbers to run (1-10)")
+    parser.add_argument("--only", nargs="*", type=int, help="experiment numbers to run (1-11)")
     parser.add_argument("--reps", type=int, default=5, help="repetitions for the timing tables")
     args = parser.parse_args()
 

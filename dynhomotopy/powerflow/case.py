@@ -31,7 +31,9 @@ class Case:
 
 def load_case(path):
     path = Path(path)
-    mpc = sio.loadmat(path)["mpc"][0, 0]
+    data = sio.loadmat(path)
+    mpc = data["mpc"] if "mpc" in data else data["mpc_m"]
+    mpc = mpc[0, 0]
     base_mva = float(np.asarray(mpc["baseMVA"], dtype=float).ravel()[0])
     bus = np.asarray(mpc["bus"], dtype=float)
     gen = np.asarray(mpc["gen"], dtype=float)

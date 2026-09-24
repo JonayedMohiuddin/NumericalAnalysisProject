@@ -83,6 +83,7 @@ system go through the same code.
 | Figure 5 | exp08_fig5.py | fig5_timestep_sensitivity.png |
 | Table 7 | exp09_table7.py | table7.md |
 | Table 8 | exp10_table8.py | table8.md |
+| Modifications (ours) | exp11_modifications.py | modifications_*.md |
 
 ## Results
 
@@ -129,6 +130,62 @@ Differences we found:
 - RK2 is slower here than in the paper (250-330% of plain NR). Our timings come from
   Python and SciPy and the paper's from MATLAB, so only the percentages can be compared.
   We report the median of several runs because single runs varied a lot on a laptop.
+
+## Modifications we tested
+
+`exp11_modifications.py` tries changes suggested by the paper or its references. It runs
+them on the paper's 9 cases plus 25 more cases from the same Zenodo records, under 5
+settings of (dt0, K) with the path {0, dt0, 1}: the paper's default, the two larger steps
+of Section 4.4, a weaker K (1e-5) and a stronger K (1e-3). That is 170 runs per variant.
+A run counts as solved if NR then converges within 10 iterations, as in the paper.
+Cost is the number of LU factorizations.
+
+| Variant | Where it comes from | Solved (of 170) | Mean LUs vs paper's BE |
+|---|---|---|---|
+| BE (paper) | the paper | 141 | 8.30 |
+| NR with Iwamoto's optimal multiplier after BE | ref. [10] | 155 | 7.37 |
+| BE predictor + one Newton corrector per point | Sec. 2.1.2, refs. [36, 37] | 154 | 8.60 |
+| Adaptive BE-PC (halve the step if the mismatch grows) | future work | 155 | 8.30 |
+| Both of the first two together | | 155 | 7.70 |
+| Adaptive BE | future work | 146 | 8.83 |
+| Jacobian-scaled K | ref. [29] | 135 | 8.30 |
+| BE with 3 fixed point iterations on one LU | remark after eq. (19) | 113 | 8.75 |
+| Newton homotopy g(x) - (1 - t) g(x0) | future work, ref. [36] | 85 | 8.94 |
+| RK4 | future work | 14 | - |
+
+The LU column is for S1 and only counts cases solved by both the variant and the
+paper's BE. Full tables are in `results/tables/modifications_*.md`.
+
+What helps:
+
+- The optimal multiplier in the final NR is the best change. It solves more cases,
+  never loses a case the paper's method solves, and uses about 11% fewer LU
+  factorizations (median run time 0.91 of the paper's). Most of the saving is on the
+  stressed limit cases, which need 2 or 3 fewer NR iterations. On the paper's 5 large
+  cases it saves one LU on case18482 only. It also fixes real divergence: case36964
+  with dt0 = 0.05 or 0.1 (the setting the paper reports as failing) and case10595
+  with K = 1e-5.
+- The predictor-corrector fixes the same divergent runs (case36964 then needs only 2
+  NR iterations), but each path point costs one more LU, so overall it is slightly more
+  expensive. Its gain is that the result hardly depends on dt0 (32 of 34 cases for all
+  three dt0 values).
+- Adaptive BE-PC is as robust as the multiplier and costs the same as the paper's
+  method in the default setting, since it simply accepts the jump to t = 1 when that
+  works.
+
+What does not help: extra fixed point iterations on the same LU (the paper's own
+suggestion) make the start worse and lose 30 runs. RK4 and the Newton homotopy fail
+on most cases. The Newton homotopy has no K I term, which shows that this shift is
+what makes the method work. Scaling K by the Jacobian diagonal changes nothing at the
+default setting and loses cases with larger steps. Combining the corrector with the
+multiplier gives nothing over the multiplier alone.
+
+Two caveats. First, for case14limit and case2736splimit the paper's method does
+converge if NR is allowed 30 iterations (it needs 11). There the modifications make
+it faster rather than rescue it. Second, NR from a flat start with the multiplier but
+no homotopy solves 22 of the 34 cases (plain NR solves 11). It still fails on 12,
+including case36964 and most of the ill-conditioned grids, so the homotopy is still
+needed. No variant solves case6024, and only plain adaptive BE solves case6748.
 
 ## Other details
 
