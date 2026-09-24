@@ -1,6 +1,8 @@
-"""Our improvements, tested in every on/off combination.
+"""Our changes to the method, each switched on and off.
 
-Each combination of the three switches in improvements.Options runs on 34 cases
+The three changes that help (multiplier, corrector, adaptive) are run in all
+8 on/off combinations. The four that did not help (BE-chord, RK4, the scaled
+and the Newton homotopy) are run on their own. Each configuration runs on 34 cases
 (the paper's 9 plus 25 more from the same Zenodo records) under 5 settings
 of (dt0, K), with the path {0, dt0, 1}. A run is solved if NR then converges
 within 10 iterations, as in the paper. Cost is the number of LU
@@ -29,6 +31,8 @@ SETTINGS = {
     "S5 strong K": (0.005, 1e-3),
 }
 COMBINATIONS = [Options(*flags) for flags in itertools.product([False, True], repeat=3)]
+COMBINATIONS += [Options(step="BE-chord"), Options(step="RK4"),
+                 Options(homotopy="scaled"), Options(homotopy="newton")]
 PAPER = Options()
 
 
@@ -72,7 +76,7 @@ def table_cost(results):
             common = [c for c in ALL if results[(c, s, PAPER.name())][0] and results[(c, s, options.name())][0]]
             ours = np.mean([results[(c, s, options.name())][1] for c in common])
             paper = np.mean([results[(c, s, PAPER.name())][1] for c in common])
-            row.append(f"{ours:.2f} vs {paper:.2f}")
+            row.append(f"{ours:.2f} vs {paper:.2f}" if common else "-")
         times = [results[(c, "S1 paper", options.name())][2] / results[(c, "S1 paper", PAPER.name())][2]
                  for c in ALL
                  if results[(c, "S1 paper", PAPER.name())][0] and results[(c, "S1 paper", options.name())][0]]

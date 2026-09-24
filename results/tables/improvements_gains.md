@@ -1,0 +1,24 @@
+**Cases the paper's method fails on that an improvement solves**
+
+| setting | case | paper's method with 30 NR iterations | solved within 10 by |
+|---|---|---|---|
+| S1 paper | case6748 | diverges | adaptive, OM + adaptive |
+| S1 paper | case14limit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S1 paper | case2736splimit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S2 Sec 4.4 | case36964 | diverges | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive, BE-chord |
+| S2 Sec 4.4 | case6024 | diverges | adaptive, OM + adaptive |
+| S2 Sec 4.4 | case6748 | diverges | adaptive, OM + adaptive |
+| S2 Sec 4.4 | case14limit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S2 Sec 4.4 | case2736splimit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S3 Sec 4.4 | case36964 | diverges | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S3 Sec 4.4 | case6024 | diverges | adaptive, OM + adaptive |
+| S3 Sec 4.4 | case14limit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S3 Sec 4.4 | case2736splimit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S3 Sec 4.4 | case3012wplimit | slow (converges in 13) | adaptive, PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive, BE-chord |
+| S4 weak K | case36964 | diverges | adaptive, OM + adaptive |
+| S4 weak K | case10595 | diverges | OM |
+| S4 weak K | case12110 | diverges | OM + PC, OM + PC + adaptive |
+| S4 weak K | case14limit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S4 weak K | case2736splimit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S5 strong K | case14limit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |
+| S5 strong K | case2736splimit | slow (converges in 11) | PC, PC + adaptive, OM, OM + adaptive, OM + PC, OM + PC + adaptive |

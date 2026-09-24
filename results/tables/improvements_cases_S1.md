@@ -1,0 +1,38 @@
+**Setting S1: LU factorizations per case, or fail**
+
+| case | paper | adaptive | PC | PC + adaptive | OM | OM + adaptive | OM + PC | OM + PC + adaptive | BE-chord | RK4 | scaled homotopy | newton homotopy |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| case18482 | 6 | 6 | 6 | 6 | 5 | 5 | 6 | 6 | 6 | fail | 6 | fail |
+| case27318 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 7 | fail | 6 | 8 |
+| case36964 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | fail | fail | 6 | fail |
+| case54636 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 7 | fail | 6 | 8 |
+| case109272 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 12 | fail | 6 | 8 |
+| case69limit | 3 | 3 | 4 | 4 | 3 | 3 | 4 | 4 | 3 | 7 | 3 | 3 |
+| case141limit | 3 | 3 | 4 | 4 | 3 | 3 | 4 | 4 | 3 | 7 | 3 | 3 |
+| case_ACTIVSg500limit | 4 | 4 | 5 | 5 | 4 | 4 | 5 | 5 | 5 | fail | 4 | 5 |
+| case_ACTIVSg2000limit | 5 | 14 | 6 | 6 | 5 | 14 | 6 | 6 | 6 | fail | 5 | 6 |
+| case6024 | fail | fail | fail | fail | fail | fail | fail | fail | fail | fail | fail | fail |
+| case6243 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | fail | fail | 6 | fail |
+| case6748 | fail | 19 | fail | fail | fail | 18 | fail | fail | fail | fail | fail | fail |
+| case7092 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 7 | fail | 6 | fail |
+| case9961 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 7 | fail | 6 | fail |
+| case10595 | 6 | 6 | 6 | 6 | 5 | 5 | 6 | 6 | 6 | fail | 6 | fail |
+| case12110 | 5 | 5 | 6 | 6 | 5 | 5 | 6 | 6 | 6 | fail | 6 | fail |
+| case14limit | fail | fail | 13 | 13 | 10 | 10 | 10 | 10 | fail | fail | fail | fail |
+| case_ieee30limit | 10 | 10 | 11 | 11 | 9 | 9 | 9 | 9 | 11 | fail | 10 | 11 |
+| case57limit | 11 | 11 | 11 | 11 | 9 | 9 | 9 | 9 | 11 | fail | 10 | 11 |
+| case89pegaselimit | 11 | 11 | 11 | 11 | 9 | 9 | 9 | 9 | 12 | fail | 11 | 12 |
+| case118limit | 10 | 10 | 11 | 11 | 9 | 9 | 9 | 9 | 11 | fail | 10 | 11 |
+| case300limit | 10 | 10 | 11 | 11 | 8 | 8 | 9 | 9 | 11 | fail | 10 | 11 |
+| case1354pegaselimit | 12 | 12 | 12 | 12 | 9 | 9 | 10 | 10 | 12 | fail | 12 | 12 |
+| case2383wplimit | 10 | 10 | 11 | 19 | 9 | 9 | 10 | 18 | 11 | fail | 10 | 11 |
+| case2736splimit | fail | fail | 13 | 13 | 11 | 11 | 9 | 9 | fail | fail | fail | fail |
+| case2737soplimit | 12 | 12 | 12 | 12 | 10 | 10 | 10 | 10 | fail | fail | 12 | fail |
+| case2746woplimit | 12 | 12 | 12 | 12 | 10 | 10 | 10 | 10 | 12 | fail | 12 | fail |
+| case2746wplimit | 12 | 12 | 12 | 12 | 10 | 10 | 10 | 10 | fail | fail | 12 | fail |
+| case2869pegaselimit | 10 | 10 | 11 | 11 | 9 | 9 | 10 | 10 | 11 | fail | 10 | 11 |
+| case3012wplimit | 12 | 19 | 11 | 11 | 11 | 18 | 10 | 10 | fail | fail | 12 | fail |
+| case3120splimit | 12 | 12 | 12 | 12 | 10 | 10 | 10 | 10 | fail | fail | 12 | fail |
+| case3375wplimit | 12 | 12 | 11 | 11 | 10 | 10 | 9 | 9 | 12 | fail | 12 | fail |
+| case9241pegaselimit | 11 | 11 | 11 | 11 | 9 | 9 | 10 | 10 | 11 | fail | 11 | 12 |
+| case13659pegaselimit | 8 | 8 | 9 | 9 | 8 | 8 | 8 | 8 | 10 | fail | 8 | 9 |

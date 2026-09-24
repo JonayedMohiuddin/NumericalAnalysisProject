@@ -7,8 +7,9 @@ from dynhomotopy.homotopy.integrators import backward_euler
 from dynhomotopy.hybrid import solve_hybrid
 from improvements import Options, solve
 from improvements.cases import load
-from improvements.corrector import backward_euler_corrected
+from improvements.homotopies import NewtonHomotopy, ScaledHomotopy
 from improvements.multiplier import optimal_multiplier
+from improvements.steps import with_corrector
 
 PATH = [0.0, 0.005, 1.0]
 
@@ -33,7 +34,7 @@ def test_corrector_moves_the_point_closer_to_the_path():
     pf = load_problem("case_ACTIVSg2000limit")
     h = FixedPointHomotopy(pf, pf.flat_start(), 1e-4)
     plain = backward_euler(h, h.x0, 0.0, 0.005)
-    corrected = backward_euler_corrected(h, h.x0, 0.0, 0.005)
+    corrected = with_corrector(backward_euler)(h, h.x0, 0.0, 0.005)
     residual = lambda x: np.linalg.norm(h.G(x, 0.005), np.inf)
     assert residual(corrected) < residual(plain)
 
@@ -52,3 +53,19 @@ def test_multiplier_and_corrector_solve_case14limit():
     assert not solve(pf, pf.flat_start(), 1e-4, PATH).converged
     assert solve(pf, pf.flat_start(), 1e-4, PATH, Options(multiplier=True)).converged
     assert solve(pf, pf.flat_start(), 1e-4, PATH, Options(corrector=True)).converged
+
+
+def test_explicit_step_starts_with_backward_euler():
+    pf = load_problem("case_ACTIVSg2000limit")
+    paper = solve(pf, pf.flat_start(), 1e-4, PATH)
+    rk4 = solve(pf, pf.flat_start(), 1e-4, PATH, Options(step="RK4"))
+    assert np.allclose(rk4.trajectory.states[1], paper.trajectory.states[1])
+
+
+@pytest.mark.parametrize("homotopy", [ScaledHomotopy, NewtonHomotopy])
+def test_other_homotopies_reach_the_original_problem_at_t1(homotopy):
+    pf = load_problem("case69limit")
+    h = homotopy(pf, pf.flat_start(), 1e-4)
+    x = pf.flat_start() + 0.01
+    assert np.allclose(h.G(x, 1.0), pf.g(x))
+    assert np.allclose(h.Gx(x, 1.0).toarray(), pf.jacobian(x).toarray())
