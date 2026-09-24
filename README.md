@@ -63,7 +63,13 @@ dynhomotopy/
     integrators.py      FE, BE, RK2 and the linearised first step
     pathway.py          the time points t_k
     dynamic.py          runs the integration along the path
-experiments/            one script per result in the paper
+improvements/           our additions, built on top of dynhomotopy (see "Improvements")
+  solve.py              solve() and the Options switches
+  multiplier.py         NR with Iwamoto's optimal multiplier
+  corrector.py          BE step followed by a Newton corrector
+  path.py               fixed and adaptive time points
+  cases.py              the wider test bed of 34 cases
+experiments/            one script per result in the paper, plus exp11 for our improvements
 tests/
 run_all.py
 ```
@@ -83,7 +89,7 @@ system go through the same code.
 | Figure 5 | exp08_fig5.py | fig5_timestep_sensitivity.png |
 | Table 7 | exp09_table7.py | table7.md |
 | Table 8 | exp10_table8.py | table8.md |
-| Modifications (ours) | exp11_modifications.py | modifications_*.md |
+| Our improvements | exp11_improvements.py | improvements_*.md |
 
 ## Results
 

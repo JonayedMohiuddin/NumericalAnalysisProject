@@ -23,7 +23,7 @@ EXPERIMENTS = [
     ("exp08_fig5", "Figure 5"),
     ("exp09_table7", "Table 7"),
     ("exp10_table8", "Table 8"),
-    ("exp11_modifications", "Our study: modifications of the method"),
+    ("exp11_improvements", "Our improvements, every on/off combination"),
 ]
 TIMED = {"exp06_fig3_table6", "exp10_table8"}
 
