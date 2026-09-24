@@ -1,12 +1,3 @@
-"""Abstract nonlinear system g(x) = 0 shared by every solver in the package.
-
-Both the tutorial example (Section 3.3) and the power-flow problem (Section 2)
-implement this interface, so Newton-Raphson and the dynamic-homotopy
-integrators are written once and applied to either.
-"""
-
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -14,49 +5,47 @@ import scipy.sparse as sp
 
 
 class NonlinearProblem(ABC):
-    """A square nonlinear system g: R^n -> R^n with a sparse Jacobian."""
+    """A square system g(x) = 0. All solvers and integrators work on this interface."""
 
-    name: str = "problem"
+    name = "problem"
 
     @property
     @abstractmethod
-    def n(self) -> int:
-        """Number of unknowns / equations."""
+    def n(self):
+        pass
 
     @abstractmethod
-    def g(self, x: np.ndarray) -> np.ndarray:
-        """Mismatch vector g(x)."""
+    def g(self, x):
+        pass
 
     @abstractmethod
-    def jacobian(self, x: np.ndarray) -> sp.csc_matrix:
-        """Jacobian J(x) = dg/dx (eq. 3)."""
+    def jacobian(self, x):
+        pass
 
-    def norm(self, x: np.ndarray) -> float:
-        """Infinity norm of the mismatch, ||g(x)||_inf, used for every table/figure."""
+    def norm(self, x):
         return float(np.linalg.norm(self.g(x), np.inf))
 
 
 class TutorialProblem(NonlinearProblem):
-    """Generic 2x2 tutorial system of Section 3.3 (taken from ref. [29]).
+    """The 2x2 example of Section 3.3.
 
-        g1(x1, x2) = x1^2 + x2^2 - 2 x1 x2 - 1 = 0
-        g2(x1, x2) = x1 + x2 - 2               = 0
+    g1 = x1^2 + x2^2 - 2 x1 x2 - 1
+    g2 = x1 + x2 - 2
 
-    The root reached from x0 = [1, 1] is x* = [1.5, 0.5]; the Jacobian is
-    singular at x0 itself.
+    The Jacobian is singular at the initial guess x0 = [1, 1].
     """
 
     name = "tutorial"
     x0 = np.array([1.0, 1.0])
 
     @property
-    def n(self) -> int:
+    def n(self):
         return 2
 
-    def g(self, x: np.ndarray) -> np.ndarray:
+    def g(self, x):
         x1, x2 = x
-        return np.array([x1**2 + x2**2 - 2 * x1 * x2 - 1.0, x1 + x2 - 2.0])
+        return np.array([x1**2 + x2**2 - 2 * x1 * x2 - 1, x1 + x2 - 2])
 
-    def jacobian(self, x: np.ndarray) -> sp.csc_matrix:
+    def jacobian(self, x):
         x1, x2 = x
-        return sp.csc_matrix(np.array([[2 * x1 - 2 * x2, 2 * x2 - 2 * x1], [1.0, 1.0]]))
+        return sp.csc_matrix([[2 * x1 - 2 * x2, 2 * x2 - 2 * x1], [1.0, 1.0]])

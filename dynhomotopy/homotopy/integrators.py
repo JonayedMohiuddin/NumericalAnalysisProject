@@ -1,61 +1,36 @@
-"""One-step integration schemes for the dynamic-homotopy ODE (Section 3).
-
-Every scheme advances x_k at t_k to x_{k+1} at t_{k+1} = t_k + dt.
-
-    FE  (16):  x_{k+1} = x_k + dt Phi(x_k, t_k)
-    BE  (19):  x_{k+1} = x_k + dt Phi(x^_{k+1}, t_{k+1}),  x^_{k+1} = x_k,
-               i.e. one fixed-point iteration of the implicit rule (17)
-    RK2 (20-21): K1 = Phi(x_k, t_k),  K2 = Phi(x_k + dt K1, t_{k+1}),
-               x_{k+1} = x_k + dt/2 (K1 + K2)
-
-For the first step from t = 0 the paper uses either BE or the linear
-approximation of the static homotopy (26)-(27); both give
-
-    dx(0) = -[J(x0) + (1 - dt0)/dt0 K I]^{-1} g(x0)   (~ -[J + delta I]^{-1} g, eq. 25)
-"""
-
-from __future__ import annotations
-
-from typing import Callable
-
-import numpy as np
+"""One step of each integration scheme, from (x, t) to t + dt."""
 
 from ..linalg import solve
-from .fpv import FixedPointHomotopy
-
-Step = Callable[[FixedPointHomotopy, np.ndarray, float, float], np.ndarray]
 
 
-def forward_euler(h: FixedPointHomotopy, x: np.ndarray, t: float, dt: float) -> np.ndarray:
-    return x + dt * h.phi(x, t)
+def forward_euler(h, x, t, dt):
+    # eq. (16)
+    return x + dt * h.dxdt(x, t)
 
 
-def backward_euler(h: FixedPointHomotopy, x: np.ndarray, t: float, dt: float,
-                   fpi_iterations: int = 1) -> np.ndarray:
-    """Implicit Euler solved approximately by fixed-point iteration (eq. 19).
-
-    The paper uses a single iteration seeded with x^_{k+1} = x_k, costing one
-    LU factorisation per pathway point.
-    """
-    x_hat = x
+def backward_euler(h, x, t, dt, fpi_iterations=1):
+    # eq. (19): the implicit equation (17) is solved by fixed point iteration
+    # starting from x. The paper uses a single iteration.
+    x_new = x
     for _ in range(fpi_iterations):
-        x_hat = x + dt * h.phi(x_hat, t + dt)
-    return x_hat
+        x_new = x + dt * h.dxdt(x_new, t + dt)
+    return x_new
 
 
-def runge_kutta2(h: FixedPointHomotopy, x: np.ndarray, t: float, dt: float) -> np.ndarray:
-    k1 = h.phi(x, t)
-    k2 = h.phi(x + dt * k1, t + dt)
-    return x + 0.5 * dt * (k1 + k2)
+def runge_kutta2(h, x, t, dt):
+    # eqs. (20)-(21)
+    k1 = h.dxdt(x, t)
+    k2 = h.dxdt(x + dt * k1, t + dt)
+    return x + dt / 2 * (k1 + k2)
 
 
-def linear_first_step(h: FixedPointHomotopy, x: np.ndarray, t: float, dt: float) -> np.ndarray:
-    """Linearised static homotopy at t1 = dt (eqs. 26-27): G(x0) + Gx(x0) dx = 0."""
-    t1 = t + dt
-    return x - solve(h.Gx(x, t1), h.G(x, t1), h.counter)
+def linear_first_step(h, x, t, dt):
+    # eqs. (26)-(27): linearise G around x at t + dt. For the first step this
+    # gives the same point as backward_euler.
+    return x - solve(h.Gx(x, t + dt), h.G(x, t + dt), h.counter)
 
 
-SCHEMES: dict[str, Step] = {
+SCHEMES = {
     "FE": forward_euler,
     "BE": backward_euler,
     "RK2": runge_kutta2,

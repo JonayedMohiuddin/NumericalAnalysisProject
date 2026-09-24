@@ -1,4 +1,4 @@
-**Fig. 4 data: V / angle of buses 2-6 of case109272 (NR iterations: 4)**
+**Fig. 4 data: buses 2-6 of case109272 (NR iterations: 4)**
 
 | bus | k=0 | k=1 | k=2 | k=3 | k=4 | k=5 | k=6 |
 |---|---|---|---|---|---|---|---|

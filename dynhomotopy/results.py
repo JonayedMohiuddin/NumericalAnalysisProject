@@ -1,62 +1,51 @@
-"""Result containers returned by the solvers and the hybrid pipeline."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import numpy as np
 
 
 @dataclass
 class SolveResult:
-    """Outcome of an iterative solver (NR, FDXB, GSH-NR).
-
-    ``norms[0]`` is ||g(x)||_inf at the initial estimate and ``norms[i]`` the
-    value after iteration i, which is how the paper tabulates the refinement.
-    """
+    """Result of NR, FDXB or GSH-NR. norms[0] is the mismatch at the initial guess."""
 
     method: str
     converged: bool
     iterations: int
     x: np.ndarray
-    norms: list[float]
+    norms: list
     factorizations: int = 0
     time: float = 0.0
-    states: list[np.ndarray] | None = None  # x after every iteration (optional)
+    states: list | None = None
 
 
 @dataclass
 class Trajectory:
-    """Discrete dynamic-homotopy pathway gamma(t): points (t_k, x_k)."""
+    """Points (t_k, x_k) computed along the homotopy path."""
 
     method: str
     K: float
-    times: list[float]
-    states: list[np.ndarray]
-    norms: list[float]            # ||g(x_k)||_inf of the original PFP
+    times: list
+    states: list
+    norms: list
     factorizations: int = 0
     time: float = 0.0
-    failed: bool = False          # non-finite state or singular matrix
+    failed: bool = False
 
     @property
-    def x_final(self) -> np.ndarray:
-        """x(t)|_{t=1}: the initial estimate handed to NR / FDXB."""
+    def x_final(self):
         return self.states[-1]
 
 
 @dataclass
 class HybridResult:
-    """Dynamic homotopy followed by a refining solver (NR or FDXB)."""
-
     trajectory: Trajectory
     refine: SolveResult | None
     time: float = 0.0
-    extra: dict = field(default_factory=dict)
 
     @property
-    def converged(self) -> bool:
+    def converged(self):
         return self.refine is not None and self.refine.converged
 
     @property
-    def factorizations(self) -> int:
-        return self.trajectory.factorizations + (self.refine.factorizations if self.refine else 0)
+    def factorizations(self):
+        refine_lus = self.refine.factorizations if self.refine else 0
+        return self.trajectory.factorizations + refine_lus

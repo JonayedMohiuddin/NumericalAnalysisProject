@@ -1,6 +1,6 @@
-**Fig. 5 data: bus 6 of case109272, BE + NR**
+**Fig. 5 data: bus 6 of case109272**
 
-| dt | pathway steps | homotopy LUs | V at t=1 | angle at t=1 (deg) | NR iterations | total LUs | V final | angle final (deg) |
+| dt | homotopy steps | homotopy LUs | V at t=1 | angle at t=1 (deg) | NR iterations | total LUs | final V | final angle (deg) |
 |---|---|---|---|---|---|---|---|---|
 | 1.0 | 2 | 2 | 1.0067 | 59.72 | 4 | 6 | 1.0045 | 21.10 |
 | 0.5 | 3 | 3 | 1.0057 | 41.77 | 3 | 6 | 1.0045 | 21.10 |

@@ -1,68 +1,56 @@
-"""Fast decoupled power flow, XB version (Section 2.1.1, eqs. 5-8).
-
-Port of MATPOWER ``fdpf`` with ``makeB(alg=2)``. B' and B'' are constant, so
-each is factorised exactly once, and the P-theta and Q-V half iterations
-alternate:
-
-    dtheta = -B'^{-1}  dP/V,        dV = -B''^{-1} dQ/V
-"""
-
-from __future__ import annotations
-
 import time
 
 import numpy as np
 
 from ..linalg import LUCounter, factorize
-from ..powerflow.model import PowerFlowProblem
 from ..powerflow.network import make_b_xb
 from ..results import SolveResult
 
 
-def fast_decoupled_xb(pf: PowerFlowProblem, x0: np.ndarray, tol: float = 1e-8,
-                      max_it: int = 100, record_states: bool = False) -> SolveResult:
-    """FDXB from ``x0``. Convergence uses MATPOWER's criterion on dP/V and dQ/V.
+def fast_decoupled_xb(pf, x0, tol=1e-8, max_it=100, record_states=False):
+    """Fast decoupled power flow, XB version (eqs. 5-8), following MATPOWER's fdpf.
 
-    ``max_it`` bounds the number of P iterations (MATPOWER's ``i``). The
-    reported ``iterations`` is the number of P- plus Q-half-iterations, which
-    is what MATPOWER prints and what Table 7 of the paper tabulates.
-    ``norms`` holds the true ||g(x)||_inf after every half iteration.
+    B' and B'' are factorised once. Each iteration is a P-theta half step
+    followed by a Q-V half step. The returned iteration count is the number
+    of half steps, which is how MATPOWER reports it and how Table 7 counts it.
     """
     start = time.perf_counter()
     counter = LUCounter()
-    bp, bpp = make_b_xb(pf.case)
-    solve_p = factorize(bp[pf.pvpq][:, pf.pvpq], counter)
-    solve_q = factorize(bpp[pf.pq][:, pf.pq], counter)
+    b_p, b_pp = make_b_xb(pf.case)
+    solve_p = factorize(b_p[pf.pvpq][:, pf.pvpq], counter)
+    solve_q = factorize(b_pp[pf.pq][:, pf.pq], counter)
+    n_angles = pf.npv + pf.npq
 
-    x = np.array(x0, dtype=float)
-    na = pf.npv + pf.npq
-
-    def scaled_mismatch(x):
+    def mismatch(x):
         v = pf.voltage(x)
         mis = pf.complex_mismatch(v) / np.abs(v)
         return mis[pf.pvpq].real, mis[pf.pq].imag
 
-    def done(p, q):
+    def small(p, q):
         return np.linalg.norm(p, np.inf) < tol and np.linalg.norm(q, np.inf) < tol
 
+    x = np.array(x0, dtype=float)
     norms = [pf.norm(x)]
     states = [x.copy()] if record_states else None
-    p, q = scaled_mismatch(x)
-    converged = done(p, q)
-    p_its = half_its = 0
-    while not converged and p_its < max_it:
+    p, q = mismatch(x)
+    converged = small(p, q)
+    p_its = half_steps = 0
+
+    while not converged and p_its < max_it and np.isfinite(norms[-1]):
         p_its += 1
-        for part, rhs_solve in ((slice(0, na), solve_p), (slice(na, None), solve_q)):
-            half_its += 1
-            x[part] -= rhs_solve(p if part.start == 0 else q)   # P-theta, then Q-V
-            p, q = scaled_mismatch(x)
+        for part in ("P", "Q"):
+            if part == "P":
+                x[:n_angles] -= solve_p(p)
+            else:
+                x[n_angles:] -= solve_q(q)
+            half_steps += 1
+            p, q = mismatch(x)
             norms.append(pf.norm(x))
-            if states is not None:
+            if record_states:
                 states.append(x.copy())
-            converged = done(p, q)
+            converged = small(p, q)
             if converged or not np.isfinite(norms[-1]):
                 break
-        if not np.isfinite(norms[-1]):
-            break
-    return SolveResult("FDXB", converged, half_its, x, norms, counter.factorizations,
+
+    return SolveResult("FDXB", converged, half_steps, x, norms, counter.factorizations,
                        time.perf_counter() - start, states)

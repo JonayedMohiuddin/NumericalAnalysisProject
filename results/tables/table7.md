@@ -1,4 +1,4 @@
-**Table 7: iterations (iter_NR or iter_ref), ours / paper**
+**Table 7: iterations (ours / paper)**
 
 | case | GSH dh1 | GSH delta | NR-MAT | NR-flat | GSH-NR | BE(NR) | RK2(NR) | BE(FDXB) | RK2(FDXB) |
 |---|---|---|---|---|---|---|---|---|---|

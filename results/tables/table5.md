@@ -1,6 +1,6 @@
-**Table 5: ||g(x)||_inf with progressive time steps, K = 1e-4  (ours / paper)**
+**Table 5: growing time steps, K = 1e-4 (ours / paper)**
 
-| case | solver | t=0 | t=0.005 | t=0.01 | t=0.02 | t=0.12 | t=0.62 | t=1 | NR 1 | NR 2 | NR 3 | NR converged (iters) |
+| case | solver | t=0 | t=0.005 | t=0.01 | t=0.02 | t=0.12 | t=0.62 | t=1 | NR 1 | NR 2 | NR 3 | NR converged (iterations) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | case36964 | FE | 533 / 532 | 66 / 65 | 3.5 / 3.5 | 0.72 / 0.7 | 5.7 / 5.7 | 57 / 57 | 114 / 114 | 28 / 28 | 4.7 / 5 | 0.23 / 0.2 | yes (5) |
 | case36964 | RK2 | 533 / 532 | 66 / 65 | 33 / 33 | 16 / 16 | 9.6 / 9.6 | 4.2 / 4.2 | 2.6 / 2.6 | 0.19 / 0.2 | 3.0e-04 / 3.0e-04 | 9.8e-10 / 1.0e-09 | yes (3) |

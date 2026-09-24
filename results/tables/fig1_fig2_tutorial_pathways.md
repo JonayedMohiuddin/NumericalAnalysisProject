@@ -1,4 +1,4 @@
-**Tutorial: ||g(x(t_k))|| along each pathway (t: norm)**
+**Tutorial: ||g(x(t_k))|| along each path (t: norm)**
 
 | method | dt | K | point 0 | point 1 | point 2 | point 3 | point 4 | point 5 | point 6 | point 7 | point 8 | point 9 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|

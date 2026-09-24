@@ -1,25 +1,3 @@
-"""GSH-NR: static "guided solution homotopy" solved point by point with NR.
-
-Comparison method of Tables 7 and 8, from ref. [12] (Freitas & Silva, 2022).
-This paper only summarises it (Section 2.3), so it is reconstructed here
-from that summary:
-
-* h1 inserts fictitious elements on the Ybus diagonal. At h = 0 they absorb
-  exactly the power the flat start fails to balance, so the flat start is the
-  solution of the "easy" network and no mismatch drives power between buses.
-  Here they are the shunts y_f = conj(S_sp - S_calc(x0)) / |V0|^2, scaled by
-  (1 - h), with only the real part kept at PV buses and none at the slack.
-* h2 reduces the impedances of the branches connected to the slack bus by the
-  factor delta at h = 0 and restores them linearly: z(h) = z (delta + (1 - delta) h).
-
-Both parameters follow the same schedule h = dh, 2 dh, ..., 1. Each point is
-solved by NR from the previous one, and the iterations are summed (iter_NR in
-Table 7). With dh = 1 and delta = 1 the method reduces to NR from a flat start,
-as in the limit-case rows of Table 7.
-"""
-
-from __future__ import annotations
-
 import time
 
 import numpy as np
@@ -32,36 +10,48 @@ from ..results import SolveResult
 from .newton import newton_raphson
 
 
-def gsh_nr(pf: PowerFlowProblem, x0: np.ndarray, dh: float, delta: float,
-           tol: float = 1e-8, max_it: int = 10) -> SolveResult:
+def gsh_nr(pf, x0, dh, delta, tol=1e-8, max_it=10):
+    """Static homotopy GSH-NR from ref. [12], used for comparison in Tables 7 and 8.
+
+    The paper only describes this method in words, so this is our version of it:
+
+    - Fictitious shunts are added to the diagonal of Ybus so that the flat
+      start solves the network exactly at h = 0. They are scaled by (1 - h).
+    - The impedance of branches connected to the slack bus is multiplied by
+      delta at h = 0 and brought back to its real value at h = 1.
+
+    h goes from dh to 1 in steps of dh. Each point is solved with NR starting
+    from the previous one, and the NR iterations are added up.
+    With dh = 1 and delta = 1 this is just NR from a flat start.
+    """
     start = time.perf_counter()
     case = pf.case
     f = case.branch[:, idx.F_BUS].astype(int)
     t = case.branch[:, idx.T_BUS].astype(int)
     near_slack = np.isin(f, pf.ref) | np.isin(t, pf.ref)
 
-    def network(h: float) -> sp.csr_matrix:
-        br = case.branch.copy()
-        scale = delta + (1.0 - delta) * h
-        br[near_slack, idx.BR_R] *= scale
-        br[near_slack, idx.BR_X] *= scale
-        return make_ybus(case.base_mva, case.bus, br)
+    def network(h):
+        branch = case.branch.copy()
+        branch[near_slack, idx.BR_R] *= delta + (1 - delta) * h
+        branch[near_slack, idx.BR_X] *= delta + (1 - delta) * h
+        return make_ybus(case.base_mva, case.bus, branch)
 
+    # shunts that absorb the flat start mismatch (only P at PV buses, nothing at the slack)
     v0 = pf.voltage(x0)
-    ds = pf.sbus - v0 * np.conj(network(0.0) @ v0)
+    ds = pf.sbus - v0 * np.conj(network(0) @ v0)
     ds[pf.pv] = ds[pf.pv].real
-    ds[pf.ref] = 0.0
-    y_fict = np.conj(ds) / np.abs(v0) ** 2
+    ds[pf.ref] = 0
+    y_shunt = np.conj(ds) / np.abs(v0) ** 2
 
-    n_points = int(round(1.0 / dh))
     x = np.array(x0, dtype=float)
-    norms, iterations, lus, converged = [pf.norm(x)], 0, 0, True
-    for k in range(1, n_points + 1):
+    norms = [pf.norm(x)]
+    iterations = lus = 0
+    converged = True
+    for k in range(1, round(1 / dh) + 1):
         h = min(k * dh, 1.0)
-        ybus = network(h) + sp.diags((1.0 - h) * y_fict)
-        sub = PowerFlowProblem(case, ybus=ybus, sbus=pf.sbus)
+        ybus = network(h) + sp.diags((1 - h) * y_shunt)
         with np.errstate(all="ignore"):
-            res = newton_raphson(sub, x, tol, max_it)
+            res = newton_raphson(PowerFlowProblem(case, ybus, pf.sbus), x, tol, max_it)
         iterations += res.iterations
         lus += res.factorizations
         x = res.x
@@ -69,4 +59,5 @@ def gsh_nr(pf: PowerFlowProblem, x0: np.ndarray, dh: float, delta: float,
         if not res.converged:
             converged = False
             break
+
     return SolveResult("GSH-NR", converged, iterations, x, norms, lus, time.perf_counter() - start)

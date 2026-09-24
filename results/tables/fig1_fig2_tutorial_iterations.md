@@ -1,6 +1,6 @@
-**Tutorial (Sec. 3.3): NR iterations to reach ||g|| < 1e-5**
+**Tutorial: NR iterations to reach ||g|| < 1e-5**
 
-| run | dt | K | NR iterations (ours) | NR iterations (paper, read from plot) | root |
+| run | dt | K | NR iterations (ours) | NR iterations (paper plot) | root |
 |---|---|---|---|---|---|
 | NR only, eps = 0.005 | - | - | 11 | 11 | (1.5000, 0.5000) |
 | NR only, eps = 0.01 | - | - | 10 | 10 | (1.5000, 0.5000) |
