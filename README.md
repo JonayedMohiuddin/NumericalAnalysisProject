@@ -29,6 +29,42 @@ printed as `ours / paper`.
 Experiments 1 to 10 (the paper) take about an hour. Experiment 11 (our improvements,
 17 configurations x 170 runs) takes several hours on a laptop.
 
+### Running one modification
+
+Each modification can be switched on alone or together with others, on any of the 34
+cases. The result is printed next to the paper's method:
+
+```
+python -m improvements case36964 --corrector                 # one improvement
+python -m improvements case36964 --corrector --multiplier    # two together
+python -m improvements case6024 --richardson --dt0 0.05 --K 1e-3
+python -m improvements --help                                # all switches
+```
+
+The three changes that help are `--corrector`, `--multiplier` and `--richardson` (see
+"Improvements"). `--adaptive`, `--step` and `--homotopy` are the other modifications we
+tested. `--adaptive` and `--richardson` cannot be combined, since both choose the time
+points.
+
+The proposal features run the same way:
+
+```
+python -m extensions spectrum case18482       # power method and inverse iteration
+python -m extensions feasibility case6024     # (K, dt0) map as text
+python -m extensions tune case6024            # golden-section search for delta and dt0
+python -m extensions scratch case_ACTIVSg500limit --refiner FDXB   # our own LU
+```
+
+To repeat the study for some configurations only (the paper's method is always added,
+and the tables are written as `improvements_selected_*`):
+
+```
+python -m experiments.exp11_improvements --configs PC "OM + PC" richardson
+```
+
+In Python, `improvements.Options` holds the same switches:
+`solve(pf, pf.flat_start(), K, times, Options(corrector=True, multiplier=True))`.
+
 ## The method
 
 Power flow means solving g(x) = 0, where x holds the bus voltage angles and magnitudes.
@@ -80,6 +116,7 @@ extensions/             the numerical parts of our proposal (see "Proposal featu
   gauss.py              Gauss elimination and LU with partial pivoting, from scratch
   scratch.py            BE path, NR and FDXB using that LU
   spectrum.py           power method and shifted inverse iteration
+  feasibility.py        outcome of the paper's method on a (K, dt0) grid
   tuning.py             golden-section search for delta and dt0
 experiments/            one script per result
 tests/
