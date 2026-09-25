@@ -10,9 +10,13 @@ from ..results import SolveResult
 def fast_decoupled_xb(pf, x0, tol=1e-8, max_it=100, record_states=False):
     """Fast decoupled power flow, XB version (eqs. 5-8), following MATPOWER's fdpf.
 
-    B' and B'' are factorised once. Each iteration is a P-theta half step
-    followed by a Q-V half step. The returned iteration count is the number
-    of half steps, which is how MATPOWER reports it and how Table 7 counts it.
+    B' and B'' are factorised once. Each iteration is a P-theta update
+    followed by a Q-V update, and max_it limits the number of these cycles.
+
+    The returned `iterations` is the number of P updates plus Q updates. This
+    is not MATPOWER's return value: fdpf returns one count per P/Q cycle and
+    only prints the P and Q counts separately. We use the sum because it is
+    what the paper's Table 7 reports (e.g. 15 P + 14 Q updates = 29).
     """
     start = time.perf_counter()
     counter = LUCounter()

@@ -28,7 +28,7 @@ def main(cases=TABLE8_CASES, reps=5):
         for m, fn in methods(name).items():
             if m not in ROWS:
                 continue
-            converged, _ = fn(pf)
+            converged, *_ = fn(pf)
             times[(m, name)] = None
             if converged:
                 to_time[(m, name)] = lambda fn=fn, pf=pf: fn(pf)

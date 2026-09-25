@@ -1,3 +1,4 @@
+import csv
 import time
 from pathlib import Path
 
@@ -44,18 +45,23 @@ def pad(values, length, filler="-"):
     return list(values[:length]) + [filler] * max(0, length - len(values))
 
 
+def markdown_cell(text):
+    # a "|" inside a cell (as in ||g||) would start a new column
+    return text.replace("|", "\\|")
+
+
 def write_table(name, header, rows, caption=""):
     """Save a table as results/tables/<name>.csv and .md and print it."""
     rows = [[fmt(c) for c in row] for row in rows]
-    with open(TABLES / f"{name}.csv", "w", encoding="utf-8") as fh:
-        fh.write(",".join(header) + "\n")
-        for row in rows:
-            fh.write(",".join(row) + "\n")
+    with open(TABLES / f"{name}.csv", "w", encoding="utf-8", newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(header)
+        writer.writerows(rows)
 
     lines = [f"**{caption}**", ""] if caption else []
-    lines.append("| " + " | ".join(header) + " |")
+    lines.append("| " + " | ".join(markdown_cell(h) for h in header) + " |")
     lines.append("|" + "|".join("---" for _ in header) + "|")
-    lines += ["| " + " | ".join(row) + " |" for row in rows]
+    lines += ["| " + " | ".join(markdown_cell(c) for c in row) + " |" for row in rows]
     text = "\n".join(lines) + "\n"
     (TABLES / f"{name}.md").write_text(text, encoding="utf-8")
     print(text)

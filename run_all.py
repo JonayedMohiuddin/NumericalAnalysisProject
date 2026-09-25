@@ -24,13 +24,17 @@ EXPERIMENTS = [
     ("exp09_table7", "Table 7"),
     ("exp10_table8", "Table 8"),
     ("exp11_improvements", "Our improvements, every on/off combination"),
+    ("exp12_spectrum", "Proposal: spectrum of the Jacobian"),
+    ("exp13_feasibility", "Proposal: feasible region in the (K, dt0) plane"),
+    ("exp14_tuning", "Proposal: golden-section tuning and a spectral rule for delta"),
+    ("exp15_scratch_lu", "Proposal: NR and FDXB with our own LU"),
 ]
 TIMED = {"exp06_fig3_table6", "exp10_table8"}
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--only", nargs="*", type=int, help="experiment numbers to run (1-11)")
+    parser.add_argument("--only", nargs="*", type=int, help="experiment numbers to run (1-15)")
     parser.add_argument("--reps", type=int, default=5, help="repetitions for the timing tables")
     args = parser.parse_args()
 

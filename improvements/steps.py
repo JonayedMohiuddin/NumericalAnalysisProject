@@ -4,7 +4,7 @@ backward_euler (from dynhomotopy) is the paper's rule. The others are the
 alternatives we tested. with_corrector() adds a Newton corrector to any of them.
 """
 
-from dynhomotopy.homotopy.integrators import backward_euler
+from dynhomotopy.homotopy.integrators import backward_euler, forward_euler, runge_kutta2
 from dynhomotopy.linalg import factorize, solve
 
 
@@ -45,6 +45,9 @@ def with_corrector(step):
 STEPS = {
     "BE": backward_euler,
     "BE-chord": backward_euler_chord,
+    "FE": forward_euler,
+    "RK2": runge_kutta2,
     "RK4": runge_kutta4,
 }
-EXPLICIT = {"RK4"}
+EXPLICIT = {"FE", "RK2", "RK4"}
+ORDER = {"BE": 1, "BE-chord": 1, "FE": 1, "RK2": 2, "RK4": 4}

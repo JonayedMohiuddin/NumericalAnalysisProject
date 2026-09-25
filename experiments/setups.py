@@ -24,13 +24,13 @@ GSH_PARAMS = {
 
 
 def methods(name):
-    """Map each method name to a function pf -> (converged, iterations)."""
+    """Map each method name to a function pf -> (converged, iterations, final state)."""
     dh, delta = GSH_PARAMS[name]
 
     def outcome(res):
         if res is None:
-            return False, 0
-        return res.converged, res.iterations
+            return False, 0, None
+        return res.converged, res.iterations, res.x
 
     def hybrid(method, times, refiner):
         return lambda pf: outcome(solve_hybrid(pf, pf.flat_start(), K_PAPER, times, method, refiner).refine)

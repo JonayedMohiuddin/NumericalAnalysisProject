@@ -1,4 +1,4 @@
-**Table 7: iterations (ours / paper)**
+**Table 7: iterations (ours / paper). case69limit and case141limit use a 100 MVA base, see table7_native_base for the 10 MVA base in their files**
 
 | case | GSH dh1 | GSH delta | NR-MAT | NR-flat | GSH-NR | BE(NR) | RK2(NR) | BE(FDXB) | RK2(FDXB) |
 |---|---|---|---|---|---|---|---|---|---|

@@ -1,4 +1,4 @@
-**Table 7 on the base MVA stored in the file (ours / paper)**
+**Table 7 for case69limit and case141limit on the 10 MVA base stored in their files (ours / paper)**
 
 | case (10 MVA base) | NR-MAT | NR-flat | BE(NR) |
 |---|---|---|---|

@@ -1,0 +1,6 @@
+**Why FDXB factorises B' and B'' once**
+
+| method | time for 20 solves with one 400 x 400 matrix (s) |
+|---|---|
+| Gauss elimination for every right-hand side | 4.454 |
+| one LU, then 20 triangular solves | 0.370 |

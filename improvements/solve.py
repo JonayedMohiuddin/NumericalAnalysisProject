@@ -10,33 +10,41 @@ from dynhomotopy.solvers import fast_decoupled_xb, newton_raphson
 
 from .homotopies import HOMOTOPIES
 from .multiplier import newton_raphson_om
-from .path import follow_path, follow_path_adaptive
-from .steps import EXPLICIT, STEPS, with_corrector
+from .path import follow_path, follow_path_adaptive, follow_path_richardson
+from .steps import EXPLICIT, ORDER, STEPS, with_corrector
 
 
 @dataclass(frozen=True)
 class Options:
     """Switches for each change to the paper's method. The defaults give the paper's BE + NR.
 
-    These helped in our tests:
-        multiplier  optimal multiplier in the final NR
-        corrector   Newton corrector after every step
-        adaptive    choose the time points on the fly
+    multiplier  optimal multiplier in the final NR
+    corrector   Newton corrector after every step
+    adaptive    choose the time points on the fly, halving while ||g|| grows
+    richardson  choose the time points from a Richardson error estimate,
+                with tolerance richardson_tol (cannot be combined with adaptive)
+    step        "BE" (paper), "BE-chord", "FE", "RK2" or "RK4"
+    homotopy    "fpv" (paper), "scaled" or "newton"
 
-    These did not:
-        step        "BE" (paper), "BE-chord" or "RK4"
-        homotopy    "fpv" (paper), "scaled" or "newton"
+    results/tables/improvements_*.md shows which of these help.
     """
 
     multiplier: bool = False
     corrector: bool = False
     adaptive: bool = False
+    richardson: bool = False
+    richardson_tol: float = 0.5
     step: str = "BE"
     homotopy: str = "fpv"
 
+    def __post_init__(self):
+        if self.adaptive and self.richardson:
+            raise ValueError("choose either adaptive or richardson, not both")
+
     def name(self):
         parts = [label for label, on in (("OM", self.multiplier), ("PC", self.corrector),
-                                         ("adaptive", self.adaptive)) if on]
+                                         ("adaptive", self.adaptive),
+                                         ("richardson", self.richardson)) if on]
         if self.step != "BE":
             parts.append(self.step)
         if self.homotopy != "fpv":
@@ -61,7 +69,7 @@ def solve(problem, x0, K, times, options=Options(), refiner="NR", tol=1e-8, max_
           record_states=False):
     """Follow the homotopy path, then refine x(1) with NR or FDXB.
 
-    With options.adaptive only times[1] (the first step dt0) is used.
+    With options.adaptive or options.richardson only times[1] (the first step dt0) is used.
     The multiplier only applies when the refiner is NR.
     """
     start = time.perf_counter()
@@ -69,6 +77,9 @@ def solve(problem, x0, K, times, options=Options(), refiner="NR", tol=1e-8, max_
     first, step = step_rules(options)
     if options.adaptive:
         traj = follow_path_adaptive(h, times[1], step, first)
+    elif options.richardson:
+        traj = follow_path_richardson(h, times[1], step, first, ORDER[options.step],
+                                      options.richardson_tol)
     else:
         traj = follow_path(h, times, step, first)
 
