@@ -43,7 +43,8 @@ def plot(ax, grid, name):
 
 
 def main(cases=CASES):
-    fig, axes = new_figure(2, 2, width=11, height=8.5)
+    fig, axes = new_figure(2, 2, width=11, height=9)
+    fig.subplots_adjust(hspace=0.35)
     rows = []
     for ax, name in zip(axes.ravel(), cases):
         pf = load(name)
