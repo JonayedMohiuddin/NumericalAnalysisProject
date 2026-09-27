@@ -29,7 +29,7 @@ The paper tests this on grids of up to 109,272 buses. Its main claim is that bac
 Euler with only two path points is enough to make NR converge where it fails from a
 flat start.
 
-As a team we did four things:
+As a team we did five things:
 
 1. **Reproduced the paper.** We wrote the whole method from scratch in Python: power
    flow model, solvers, homotopy and integrators. We reran every table and figure of the
@@ -47,18 +47,21 @@ As a team we did four things:
    maps of where the method works, golden-section tuning, error-controlled steps, and
    linear solvers written by hand. All of these are implemented, and each has a
    measured result, including the ones that did not work.
+5. **Generated the report.** Two scripts in `report/scripts/` build every figure and
+   table of the project report (`report/main.tex`): one runs the project code, the
+   other reads the saved results. So the report can be rebuilt after any rerun.
 
 ## Who did what
 
 The table gives an overview. The sections below explain each member's work in full.
 
-| Member | Core code | Paper results reproduced | Improvements | Proposal features |
-|---|---|---|---|---|
-| Jonayed | power flow model, test systems | flat-start check, base MVA finding | wider test bed, solution check, comparison study | feasibility maps |
-| Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps | spectrum of the Jacobian |
-| Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy | NR and FDXB with our own LU |
-| Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules | golden-section tuning of delta |
-| Sadman | sparse LU counter, result types | Section 4.4, Figure 5 | Richardson step control, scaled homotopy, command-line tools | Gauss elimination and LU from scratch |
+| Member | Core code | Paper results reproduced | Improvements | Proposal features | Report |
+|---|---|---|---|---|---|
+| Jonayed | power flow model, test systems | flat-start check, base MVA finding | wider test bed, solution check, comparison study | feasibility maps | test-systems table and figure, feasibility figure, study summary figure and table |
+| Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps | spectrum of the Jacobian | tutorial geometry, first step, adaptive path, spectrum figures |
+| Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy | NR and FDXB with our own LU | timing, cost against robustness, per-case map, rescue histories |
+| Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules | golden-section tuning of delta | Tables 2 to 5 in LaTeX, fidelity plot, tuning figure |
+| Sadman | sparse LU counter, result types | Section 4.4, Figure 5 | Richardson step control, scaled homotopy, command-line tools | Gauss elimination and LU from scratch | shared figure style, Jacobian sparsity, Section 4.4 grid, Figure 5 cost, Richardson paths |
 
 ---
 
@@ -134,6 +137,24 @@ band along delta = K / dt0. For case36964 no setting with dt0 of 0.1 or more wor
 explains the paper's unexplained failure at dt0 = 0.1, K = 0.002. For case6024 the
 working band lies at a much larger delta than the paper's 0.02.
 
+### Report: test systems and the study summary
+
+- In `report/scripts/figures_from_code.py`, the test-system statistics. For each of the
+  34 grids it records the number of buses, PV buses and unknowns, the non-zeros of the
+  Jacobian, the flat-start mismatch, and whether NR converges from a flat start and from
+  the case file's own start (cached in `report/generated/systems.json`). From these it
+  writes the test-systems table of the report (`systems_rows.tex`, which also lists the
+  networks each large grid was built from) and a figure comparing the size of every grid
+  with its flat-start mismatch (`systems.pdf`).
+- The report version of the feasibility maps (`feasibility.pdf`). The grids are cached in
+  `feasibility.json`, so the report can be rebuilt without running them again.
+- In `report/scripts/figures_from_results.py`, the summary of the improvements study.
+  From `improvements_raw.csv` it counts, for every configuration, the runs solved in each
+  setting, the wrong roots, and the runs gained and lost against the paper's method,
+  splitting the gains into rescues, root fixes and speed-ups. It draws the headline
+  figure of runs solved per configuration (`improve_solved.pdf`) and writes the main
+  results table of the report (`improve_table.tex`).
+
 ---
 
 ## Apurbo
@@ -201,6 +222,21 @@ all 34 grids and checks it against SciPy's ARPACK.
   on grids built from copies of one network, where the largest eigenvalues come in
   near-equal clusters.
 
+### Report: the tutorial, the first step, adaptive paths and the spectrum
+
+- `tutorial_geometry.pdf` (`figures_from_code.py`): the 2x2 example drawn in the
+  (x1, x2) plane over a map of the mismatch, for K = 0.05 and K = 0.005. It shows the
+  exact homotopy path (traced with many small corrected steps), the three-step FE, RK2
+  and BE paths with the NR iterations that follow them, the line where the Jacobian is
+  singular, and the two roots of the system.
+- `adaptive_path.pdf`: every step the adaptive rule tries on case6748 at the paper's
+  setting, accepted and rejected, next to the paper's fixed path.
+- `first_step.pdf` (`figures_from_results.py`): for every case of the paper, the
+  flat-start mismatch next to the mismatch after one FE, RK2 or BE step to t1 = 0.005.
+  The explicit steps explode while backward Euler contracts.
+- `spectrum.pdf`: for all 34 grids, the smallest eigenvalue modulus of J and of
+  J + 0.02 I, and the eigenvalue ratio before and after the shift.
+
 ---
 
 ## Hasbi
@@ -256,6 +292,22 @@ with every linear system solved by Sadman's hand-written LU, and
 and the 69- to 2000-bus grids it gives the same iterations and the same solution to
 5e-12. It is far slower (424 s against 0.04 s on the 2000-bus grid), because a dense LU
 costs O(n^3) and ignores sparsity.
+
+### Report: cost and rescue figures
+
+- `timing.pdf` (`figures_from_results.py`): the Table 8 run times of BE and RK2 followed
+  by NR or FDXB, as a percentage of NR from the case file, with the paper's MATLAB value
+  marked on each bar.
+- `improve_pareto.pdf`: every configuration of the improvements study placed by runs
+  solved against LU cost relative to the paper's method, so the robust and cheap ones
+  stand out.
+- `improve_cases_s1.pdf`: a map of all 34 cases against all configurations at the
+  paper's setting, with the LU count of every solved run and marks for wrong roots and
+  failures.
+- `rescues.pdf` (`figures_from_code.py`): the mismatch history of the paper's method,
+  the multiplier, the corrector and both together on three typical runs: a rescue
+  (case36964 with dt0 = 0.05), a root fix (case3012wplimit) and a speed-up
+  (case14limit).
 
 ---
 
@@ -315,6 +367,18 @@ delta of 1 to 5. The spectral rule, built on Apurbo's estimate of lambda_min, do
 work, because the best delta is not proportional to the smallest eigenvalue. Searching
 each case solves four more test grids, but the search costs about 21 solves.
 
+### Report: the reproduction tables, fidelity and tuning
+
+- In `figures_from_results.py`, the LaTeX rows of Tables 2 to 5 (`table2_rows.tex` to
+  `table5_rows.tex`), with our value and the paper's value on alternate lines in the
+  report's number format. Tables 4 and 5 appear in the main text and Tables 2 and 3 in
+  the appendix. The same script's readers for the saved result tables are also Sizan's.
+- `fidelity.pdf`: every numeric cell of Tables 2 to 5 plotted as our value against the
+  paper's value, with the number of cells that agree within a factor of 2.
+- `tuning.pdf`: the golden-section tuned delta of every grid against its smallest
+  eigenvalue, with the paper's delta = 0.02 and the fitted spectral rule drawn in. It
+  shows why no single factor of lambda_min fits.
+
 ---
 
 ## Sadman
@@ -368,6 +432,22 @@ the tools that run any part of the project from the command line.
   sides, which is why FDXB factorizes its matrices only once.
 - `extensions/__main__.py` runs each proposal feature on one grid, for example
   `python -m extensions spectrum case18482`.
+
+### Report: figure style, sparsity, Section 4.4, Figure 5 and Richardson paths
+
+- `report/scripts/style.py`: the colours, fonts and plot settings shared by every report
+  figure, and the helpers that save the figures and the generated LaTeX tables.
+- `spy.pdf` (`figures_from_code.py`): the sparsity pattern of the Jacobian for the 2000-,
+  18,482- and 109,272-bus grids, with the number of unknowns and non-zeros. It shows why
+  a sparse LU is needed at this size.
+- `richardson_path.pdf`: the Richardson-controlled paths on case6024 with BE, FE and RK2,
+  next to the paper's fixed path: the mismatch along the path and the accepted step
+  sizes.
+- `sec44_grid.pdf` (`figures_from_results.py`): the Section 4.4 re-run as a grid of paths
+  against integration schemes, coloured by whether NR, FDXB, both or neither converge,
+  with the NR iteration counts.
+- `fig5_tradeoff.pdf`: the homotopy and NR LU factorizations for each time step of
+  Figure 5, showing that smaller steps cost more without a better result.
 
 ---
 
