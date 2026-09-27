@@ -1,6 +1,7 @@
 __pycache__/
 .pytest_cache/
 data/cases/*.mat
+.local
 
 # LaTeX build files of the report
 report/*.aux
