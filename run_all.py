@@ -1,13 +1,3 @@
-"""Run the experiments that reproduce the paper's figures and tables.
-
-    python run_all.py              # all of them
-    python run_all.py --only 3 7   # only experiments 3 and 7
-    python run_all.py --reps 20    # more repetitions for the timing tables
-
-A single experiment can also be run on its own, e.g.
-    python -m experiments.exp03_tables2to4
-"""
-
 import argparse
 import importlib
 import time
