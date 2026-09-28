@@ -4,6 +4,7 @@
     python -m extensions feasibility case6024
     python -m extensions tune case6024
     python -m extensions scratch case_ACTIVSg500limit --refiner FDXB
+    python -m extensions spectrum path/to/mycase.mat
 
 Richardson step control, the fifth feature, is a switch of the improvements
 package:  python -m improvements case6024 --richardson
@@ -71,10 +72,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m extensions", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("feature", choices=list(FEATURES))
-    parser.add_argument("case", choices=ALL, metavar="case", help="test system, e.g. case18482")
+    parser.add_argument("case", help="test system (e.g. case18482) or a path to a .mat file")
     parser.add_argument("--delta", type=float, default=0.02, help="shift for 'spectrum' (default 0.02)")
     parser.add_argument("--refiner", choices=["NR", "FDXB"], default="NR", help="for 'scratch'")
     args = parser.parse_args(argv)
+    if args.case not in ALL and not args.case.endswith(".mat"):
+        parser.error(f"unknown case {args.case}; use one of {', '.join(ALL)} or a .mat file")
     FEATURES[args.feature](load(args.case), args)
 
 

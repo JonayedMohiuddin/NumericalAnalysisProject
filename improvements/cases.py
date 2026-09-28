@@ -24,6 +24,11 @@ _references = {}
 
 
 def load(name):
+    """A test system by name, or any MATPOWER case given as a path to a .mat file."""
+    if name.endswith(".mat"):
+        if name not in _loaded:
+            _loaded[name] = PowerFlowProblem(load_case(name))
+        return _loaded[name]
     if name in datasets.SYSTEMS:
         return datasets.load_problem(name)
     if name not in _loaded:

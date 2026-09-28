@@ -21,6 +21,10 @@ python -m experiments.exp03_tables2to4      # a single experiment
 python -m pytest tests
 ```
 
+Both `python -m improvements` and `python -m extensions` also take a path to any
+MATPOWER case saved as a `.mat` file (a struct named `mpc`) in place of a case name,
+for example `python -m improvements mycase.mat --corrector`.
+
 The test systems are downloaded from Zenodo into `data/cases/` the first time they are
 needed (records 3514739 and 3491654, the same files the paper uses). Results are written
 to `results/tables` and `results/figures`. Where the paper has a value, a table cell is

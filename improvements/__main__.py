@@ -3,6 +3,7 @@
     python -m improvements case18482 --corrector
     python -m improvements case6024 --multiplier --richardson
     python -m improvements case36964 --dt0 0.1 --K 2e-3 --corrector --multiplier
+    python -m improvements path/to/mycase.mat --corrector
 """
 
 import argparse
@@ -26,7 +27,7 @@ def describe(pf, res):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m improvements", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("case", choices=ALL, metavar="case", help="test system, e.g. case18482")
+    parser.add_argument("case", help="test system (e.g. case18482) or a path to a .mat file")
     parser.add_argument("--multiplier", action="store_true", help="optimal multiplier in the final NR")
     parser.add_argument("--corrector", action="store_true", help="Newton corrector after every step")
     control = parser.add_mutually_exclusive_group()
@@ -39,6 +40,8 @@ def main(argv=None):
     parser.add_argument("--K", type=float, default=1e-4, help="factor K (default 1e-4)")
     parser.add_argument("--refiner", choices=["NR", "FDXB"], default="NR")
     args = parser.parse_args(argv)
+    if args.case not in ALL and not args.case.endswith(".mat"):
+        parser.error(f"unknown case {args.case}; use one of {', '.join(ALL)} or a .mat file")
 
     options = Options(multiplier=args.multiplier, corrector=args.corrector, adaptive=args.adaptive,
                       richardson=args.richardson, richardson_tol=args.richardson_tol,

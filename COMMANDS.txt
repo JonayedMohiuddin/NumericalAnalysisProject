@@ -1,0 +1,94 @@
+SETUP
+python -m pip install -r requirements.txt
+python -m pytest tests
+
+ALL EXPERIMENTS
+python run_all.py
+python run_all.py --reps 20
+python run_all.py --only 3 4
+
+BASE PAPER
+python run_all.py --only 1
+python run_all.py --only 2
+python run_all.py --only 3
+python run_all.py --only 4
+python run_all.py --only 5
+python run_all.py --only 6
+python run_all.py --only 7
+python run_all.py --only 8
+python run_all.py --only 9
+python run_all.py --only 10
+python run_all.py --only 1 2 3 4 5 6 7 8 9 10
+
+IMPROVEMENTS (full study)
+python run_all.py --only 11
+
+IMPROVEMENTS (one case)
+python -m improvements case18482
+python -m improvements case18482 --multiplier
+python -m improvements case18482 --corrector
+python -m improvements case18482 --adaptive
+python -m improvements case18482 --richardson
+python -m improvements case18482 --richardson --richardson-tol 0.5
+python -m improvements case18482 --step BE
+python -m improvements case18482 --step BE-chord
+python -m improvements case18482 --step FE
+python -m improvements case18482 --step RK2
+python -m improvements case18482 --step RK4
+python -m improvements case18482 --homotopy fpv
+python -m improvements case18482 --homotopy scaled
+python -m improvements case18482 --homotopy newton
+python -m improvements case18482 --refiner NR
+python -m improvements case18482 --refiner FDXB
+python -m improvements case18482 --dt0 0.005 --K 1e-4
+python -m improvements case18482 --multiplier --corrector
+python -m improvements case6024 --multiplier --richardson
+python -m improvements case36964 --dt0 0.1 --K 2e-3 --corrector --multiplier
+python -m improvements path/to/mycase.mat --corrector
+
+PROPOSAL FEATURES (full studies)
+python run_all.py --only 12
+python run_all.py --only 13
+python run_all.py --only 14
+python run_all.py --only 15
+
+PROPOSAL FEATURES (one case)
+python -m extensions spectrum case18482
+python -m extensions spectrum case18482 --delta 0.02
+python -m extensions feasibility case6024
+python -m extensions tune case6024
+python -m extensions scratch case_ACTIVSg500limit
+python -m extensions scratch case_ACTIVSg500limit --refiner FDXB
+python -m extensions spectrum path/to/mycase.mat
+
+SINGLE EXPERIMENT SCRIPTS
+python -m experiments.exp01_tutorial
+python -m experiments.exp02_first_step
+python -m experiments.exp03_tables2to4
+python -m experiments.exp04_table5
+python -m experiments.exp05_sec44_pathways
+python -m experiments.exp06_fig3_table6
+python -m experiments.exp07_fig4
+python -m experiments.exp08_fig5
+python -m experiments.exp09_table7
+python -m experiments.exp10_table8
+python -m experiments.exp11_improvements
+python -m experiments.exp12_spectrum
+python -m experiments.exp13_feasibility
+python -m experiments.exp14_tuning
+python -m experiments.exp15_scratch_lu
+
+HELP
+python -m improvements -h
+python -m extensions -h
+python run_all.py -h
+
+CASES
+case18482 case27318 case36964 case54636 case109272
+case69limit case141limit case_ACTIVSg500limit case_ACTIVSg2000limit
+case6024 case6243 case6748 case7092 case9961 case10595 case12110
+case14limit case_ieee30limit case57limit case89pegaselimit case118limit
+case300limit case1354pegaselimit case2383wplimit case2736splimit
+case2737soplimit case2746woplimit case2746wplimit case2869pegaselimit
+case3012wplimit case3120splimit case3375wplimit case9241pegaselimit
+case13659pegaselimit
