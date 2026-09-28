@@ -2,8 +2,8 @@ import time
 
 import numpy as np
 import scipy.sparse as sp
+from pypower.idx_brch import BR_R, BR_X, F_BUS, T_BUS
 
-from ..powerflow import idx
 from ..powerflow.model import PowerFlowProblem
 from ..powerflow.network import make_ybus
 from ..results import SolveResult
@@ -26,14 +26,14 @@ def gsh_nr(pf, x0, dh, delta, tol=1e-8, max_it=10):
     """
     start = time.perf_counter()
     case = pf.case
-    f = case.branch[:, idx.F_BUS].astype(int)
-    t = case.branch[:, idx.T_BUS].astype(int)
+    f = case.branch[:, F_BUS].astype(int)
+    t = case.branch[:, T_BUS].astype(int)
     near_slack = np.isin(f, pf.ref) | np.isin(t, pf.ref)
 
     def network(h):
         branch = case.branch.copy()
-        branch[near_slack, idx.BR_R] *= delta + (1 - delta) * h
-        branch[near_slack, idx.BR_X] *= delta + (1 - delta) * h
+        branch[near_slack, BR_R] *= delta + (1 - delta) * h
+        branch[near_slack, BR_X] *= delta + (1 - delta) * h
         return make_ybus(case.base_mva, case.bus, branch)
 
     # shunts that absorb the flat start mismatch (only P at PV buses, nothing at the slack)

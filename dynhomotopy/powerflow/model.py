@@ -1,8 +1,10 @@
 import numpy as np
 import scipy.sparse as sp
+from pypower.dSbus_dV import dSbus_dV
+from pypower.idx_bus import VA, VM
+from pypower.idx_gen import GEN_BUS, VG
 
 from ..problem import NonlinearProblem
-from . import idx
 from .case import bus_types
 from .network import make_sbus, make_ybus
 
@@ -28,7 +30,7 @@ class PowerFlowProblem(NonlinearProblem):
 
         # generator voltage set points hold |V| at PV and slack buses
         self.vm_fixed = np.ones(case.nb)
-        self.vm_fixed[case.gen[:, idx.GEN_BUS].astype(int)] = case.gen[:, idx.VG]
+        self.vm_fixed[case.gen[:, GEN_BUS].astype(int)] = case.gen[:, VG]
 
     @property
     def n(self):
@@ -46,9 +48,9 @@ class PowerFlowProblem(NonlinearProblem):
 
     def case_start(self):
         """Initial guess stored in the case file, with the slack angle moved to 0."""
-        va = np.deg2rad(self.case.bus[:, idx.VA])
+        va = np.deg2rad(self.case.bus[:, VA])
         va -= va[self.ref[0]]
-        vm = self.case.bus[:, idx.VM]
+        vm = self.case.bus[:, VM]
         return np.concatenate([va[self.pvpq], vm[self.pq]])
 
     def angle_index(self, bus):
@@ -65,14 +67,8 @@ class PowerFlowProblem(NonlinearProblem):
         return np.concatenate([mis[self.pvpq].real, mis[self.pq].imag])
 
     def jacobian(self, x):
-        # derivatives of the bus injections, as in MATPOWER's dSbus_dV
-        v = self.voltage(x)
-        y = self.ybus
-        ibus = y @ v
-        diag_v = sp.diags(v)
-        diag_vnorm = sp.diags(v / np.abs(v))
-        ds_dvm = sp.csr_matrix(diag_v @ np.conj(y @ diag_vnorm) + sp.diags(np.conj(ibus)) @ diag_vnorm)
-        ds_dva = sp.csr_matrix(1j * diag_v @ np.conj(sp.diags(ibus) - y @ diag_v))
+        ds_dvm, ds_dva = dSbus_dV(self.ybus, self.voltage(x))
+        ds_dvm, ds_dva = sp.csr_matrix(ds_dvm), sp.csr_matrix(ds_dva)
 
         j11 = ds_dva[self.pvpq][:, self.pvpq].real
         j12 = ds_dvm[self.pvpq][:, self.pq].real

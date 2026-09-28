@@ -93,9 +93,9 @@ dynhomotopy/            the paper's method, nothing else
   linalg.py             sparse LU with a counter for the number of factorizations
   hybrid.py             homotopy followed by NR or FDXB
   powerflow/
-    case.py             reads MATPOWER .mat files, renumbers buses, finds PV/PQ buses
-    network.py          Ybus, Sbus, and B' / B'' for FDXB
-    model.py            power flow equations and Jacobian
+    case.py             reads MATPOWER .mat files; renumbering and PV/PQ buses via PYPOWER
+    network.py          Ybus, Sbus, and B' / B'' for FDXB, from PYPOWER
+    model.py            power flow equations g(x) and Jacobian (PYPOWER's dSbus_dV)
   solvers/
     newton.py           Newton-Raphson
     fdxb.py             fast decoupled load flow, XB version
@@ -125,6 +125,11 @@ run_all.py
 
 The solvers only use `g(x)` and `jacobian(x)`, so the 2x2 example and the 109,272-bus
 system go through the same code.
+
+The power flow model itself (reading a case, building Ybus and Sbus, the derivatives
+for the Jacobian) comes from PYPOWER, a Python port of MATPOWER. It contains no solving,
+only formulas. Every numerical method (NR, FDXB, the homotopy, the integrators, the LU
+counting and everything in `improvements/` and `extensions/`) is our own code.
 
 | Result | Script | Output |
 |---|---|---|

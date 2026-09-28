@@ -75,18 +75,17 @@ decide whether a result is right.
 - `dynhomotopy/datasets.py` lists the paper's nine test systems (five ill-conditioned
   grids of 18,482 to 109,272 buses and four stressed "limit" cases). It downloads them
   from the two Zenodo records the paper cites the first time they are needed.
-- `dynhomotopy/powerflow/case.py` reads the MATPOWER `.mat` files. It repeats what
-  MATPOWER does before a power flow: it removes isolated buses and switched-off
-  generators and branches, renumbers the buses 0 to n-1, and marks each bus as slack,
-  PV or PQ. `idx.py` holds the MATPOWER column numbers.
-- `dynhomotopy/powerflow/network.py` builds the bus admittance matrix Ybus with the full
-  MATPOWER branch model (series impedance, line charging, tap ratios, phase shifters,
-  bus shunts), the specified injections Sbus, and the B' and B'' matrices of the fast
-  decoupled method.
+- `dynhomotopy/powerflow/case.py` reads the MATPOWER `.mat` files and passes them to
+  PYPOWER's `ext2int` and `bustypes`, which remove isolated buses and switched-off
+  generators and branches, renumber the buses 0 to n-1, and mark each bus as slack,
+  PV or PQ.
+- `dynhomotopy/powerflow/network.py` wraps PYPOWER's `makeYbus`, `makeSbus` and `makeB`
+  for the bus admittance matrix Ybus, the specified injections Sbus, and the B' and B''
+  matrices of the fast decoupled method.
 - `dynhomotopy/powerflow/model.py` defines the power flow equations (equations 1 and 2 of
   the paper). The state is x = [angles of PV and PQ buses, magnitudes of PQ buses], the
-  mismatch is g(x) = V conj(Ybus V) - Sbus, and the Jacobian (equation 3) is built in
-  sparse form from the derivatives of the bus injections.
+  mismatch is g(x) = V conj(Ybus V) - Sbus, and the Jacobian (equation 3) is assembled
+  in sparse form from the derivatives of the bus injections given by PYPOWER's `dSbus_dV`.
 - `dynhomotopy/problem.py` defines the interface `g(x)`, `jacobian(x)` that every solver
   uses, and the 2x2 example of Section 3.3. Because all solvers are written against this
   interface, the same code runs on the 2x2 example and on the 109,272-bus grid.
