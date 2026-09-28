@@ -1,5 +1,3 @@
-"""The test systems of Section 4.1, downloaded from Zenodo when first needed."""
-
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path

@@ -11,19 +11,6 @@ from .newton import newton_raphson
 
 
 def gsh_nr(pf, x0, dh, delta, tol=1e-8, max_it=10):
-    """Static homotopy GSH-NR from ref. [12], used for comparison in Tables 7 and 8.
-
-    The paper only describes this method in words, so this is our version of it:
-
-    - Fictitious shunts are added to the diagonal of Ybus so that the flat
-      start solves the network exactly at h = 0. They are scaled by (1 - h).
-    - The impedance of branches connected to the slack bus is multiplied by
-      delta at h = 0 and brought back to its real value at h = 1.
-
-    h goes from dh to 1 in steps of dh. Each point is solved with NR starting
-    from the previous one, and the NR iterations are added up.
-    With dh = 1 and delta = 1 this is just NR from a flat start.
-    """
     start = time.perf_counter()
     case = pf.case
     f = case.branch[:, F_BUS].astype(int)

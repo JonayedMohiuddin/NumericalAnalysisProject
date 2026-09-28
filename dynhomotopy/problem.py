@@ -5,7 +5,7 @@ import scipy.sparse as sp
 
 
 class NonlinearProblem(ABC):
-    """A square system g(x) = 0. All solvers and integrators work on this interface."""
+    # A square system g(x) = 0. All solvers and integrators work on this interface
 
     name = "problem"
 
@@ -27,14 +27,6 @@ class NonlinearProblem(ABC):
 
 
 class TutorialProblem(NonlinearProblem):
-    """The 2x2 example of Section 3.3.
-
-    g1 = x1^2 + x2^2 - 2 x1 x2 - 1
-    g2 = x1 + x2 - 2
-
-    The Jacobian is singular at the initial guess x0 = [1, 1].
-    """
-
     name = "tutorial"
     x0 = np.array([1.0, 1.0])
 

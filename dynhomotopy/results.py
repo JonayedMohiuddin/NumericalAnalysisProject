@@ -5,7 +5,7 @@ import numpy as np
 
 @dataclass
 class SolveResult:
-    """Result of NR, FDXB or GSH-NR. norms[0] is the mismatch at the initial guess."""
+    # Result of NR, FDXB or GSH-NR. norms[0] is the mismatch at the initial guess
 
     method: str
     converged: bool
@@ -19,7 +19,7 @@ class SolveResult:
 
 @dataclass
 class Trajectory:
-    """Points (t_k, x_k) computed along the homotopy path."""
+    # Points (t_k, x_k) computed along the homotopy path
 
     method: str
     K: float

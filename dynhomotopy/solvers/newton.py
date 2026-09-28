@@ -7,7 +7,6 @@ from ..results import SolveResult
 
 
 def newton_raphson(problem, x0, tol=1e-8, max_it=10, record_states=False):
-    """Newton-Raphson, eq. (4). max_it = 10 is MATPOWER's default."""
     start = time.perf_counter()
     counter = LUCounter()
     x = np.array(x0, dtype=float)

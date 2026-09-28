@@ -4,13 +4,12 @@ from ..linalg import LUCounter, solve
 
 
 class FixedPointHomotopy:
-    """Homotopy of Section 3.1 with the fixed point function g0(x) = K (x - x0).
-
-    G(x, t)  = t g(x) + (1 - t) K (x - x0)      eq. (12), (22)
-    Gx(x, t) = t J(x) + (1 - t) K I             eq. (23)
-    Gt(x)    = g(x) - K (x - x0)                eq. (24)
-
-    Along the path dx/dt = -Gx^-1 Gt (eq. 15).
+    """
+    Homotopy with the fixed point function g0(x) = K (x - x0).
+    G(x, t)  = t g(x) + (1 - t) K (x - x0)     
+    Gx(x, t) = t J(x) + (1 - t) K I         
+    Gt(x)    = g(x) - K (x - x0)              
+    Along the path dx/dt = -Gx^-1 Gt
     """
 
     def __init__(self, problem, x0, K, counter=None):

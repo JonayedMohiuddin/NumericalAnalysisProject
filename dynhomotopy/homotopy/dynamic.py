@@ -9,12 +9,6 @@ from .integrators import SCHEMES
 
 
 def integrate(problem, x0, K, times, method="BE", first_step="BE"):
-    """Follow the homotopy path from x(0) = x0 over the given time points.
-
-    As in Section 4.3, the first step to t1 is taken with BE (explicit schemes
-    blow up there) and `method` is used for the rest. Pass first_step=None to
-    use `method` for the first step too.
-    """
     start = time.perf_counter()
     counter = LUCounter()
     h = FixedPointHomotopy(problem, np.asarray(x0), K, counter)

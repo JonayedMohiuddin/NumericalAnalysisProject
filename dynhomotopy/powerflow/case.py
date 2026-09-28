@@ -9,8 +9,7 @@ from pypower.ext2int import ext2int
 
 @dataclass
 class Case:
-    """A MATPOWER case with buses renumbered 0..nb-1 (internal indexing)."""
-
+    # A MATPOWER case with buses renumbered 0..nb-1
     name: str
     base_mva: float
     bus: np.ndarray
@@ -30,7 +29,7 @@ class Case:
 
 
 def load_case(path):
-    """Read a MATPOWER .mat case and convert it to internal indexing with PYPOWER's ext2int."""
+    # Read a MATPOWER .mat case and convert it to internal indexing with PYPOWER's ext2int.
     path = Path(path)
     data = sio.loadmat(path)
     mpc = data["mpc"] if "mpc" in data else data["mpc_m"]
@@ -47,5 +46,5 @@ def load_case(path):
 
 
 def bus_types(case):
-    """Indices of the reference, PV and PQ buses."""
+    # ndices of the reference, PV and PQ buses.
     return bustypes(case.bus, case.gen)

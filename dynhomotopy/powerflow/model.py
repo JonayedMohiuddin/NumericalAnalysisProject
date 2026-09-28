@@ -10,7 +10,8 @@ from .network import make_sbus, make_ybus
 
 
 class PowerFlowProblem(NonlinearProblem):
-    """Power balance equations (1)-(2) in polar form.
+    """
+    Power balance equations (1)-(2) in polar form.
 
     The state is x = [theta_pv, theta_pq, V_pq] and the mismatch is
     g(x) = [dP_pv, dP_pq, dQ_pq] with dS = V * conj(Ybus V) - Sbus,

@@ -2,9 +2,8 @@
 
 
 def constant_step(dt0, dt, t2=None):
-    """[0, dt0, (t2), ..., 1] with a constant step dt after the first point(s).
-
-    The last step is shortened so the path ends at 1, e.g.
+    """
+    The last step is shortened so the path ends at 1
     constant_step(0.005, 1.0) gives [0, 0.005, 1.0].
     """
     times = [0.0, dt0]

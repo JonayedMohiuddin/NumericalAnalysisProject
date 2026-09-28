@@ -14,7 +14,7 @@ class LUCounter:
 
 
 def factorize(a, counter=None):
-    """Sparse LU of `a`. Returns a function that solves a x = b."""
+    # Sparse LU of a. Returns a function that solves a x = b.
     if counter is not None:
         counter.factorizations += 1
     try:
