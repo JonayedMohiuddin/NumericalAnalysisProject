@@ -4,7 +4,7 @@ import math
 
 import numpy as np
 
-from improvements import Options, solve
+from .solve import Options, solve
 
 INV_PHI = (math.sqrt(5) - 1) / 2
 FAIL_COST = 50.0

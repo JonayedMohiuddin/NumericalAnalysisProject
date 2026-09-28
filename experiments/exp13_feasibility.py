@@ -1,7 +1,7 @@
 """Proposal: where in the (K, dt0) plane does the paper's method work?
 
 The paper's method (BE path {0, dt0, 1}, then NR) is run on a grid of K and
-dt0 for four cases (extensions/feasibility.py). Each cell is solved
+dt0 for four cases (improvements/feasibility.py). Each cell is solved
 (reference operating point), other root, or failed. Lines of constant
 delta = K / dt0 are diagonals of the map.
 """
@@ -9,7 +9,7 @@ delta = K / dt0 are diagonals of the map.
 import numpy as np
 from matplotlib.colors import ListedColormap
 
-from extensions.feasibility import DT0_VALUES, K_VALUES, OTHER_ROOT, SOLVED, feasibility_grid
+from improvements.feasibility import DT0_VALUES, K_VALUES, OTHER_ROOT, SOLVED, feasibility_grid
 from improvements.cases import load
 
 from .common import savefig, write_table

@@ -43,7 +43,7 @@ As a team we did five things:
    references on a larger set of 34 test grids. Three clearly help: a Newton corrector,
    Iwamoto's optimal multiplier and Richardson step control. Each change is a separate
    switch that can be turned on alone or combined with others.
-4. **Delivered our proposal.** Our proposal promised a spectral study of the Jacobian,
+4. **Delivered our proposal.** Our proposal presentation stated a spectral study of the Jacobian,
    maps of where the method works, golden-section tuning, error-controlled steps, and
    linear solvers written by hand. All of these are implemented, and each has a
    measured result, including the ones that did not work.
@@ -55,13 +55,13 @@ As a team we did five things:
 
 The table gives an overview. The sections below explain each member's work in full.
 
-| Member | Core code | Paper results reproduced | Improvements | Proposal features | Report |
-|---|---|---|---|---|---|
-| Jonayed | power flow model, test systems | flat-start check, base MVA finding | wider test bed, solution check, comparison study | feasibility maps | test-systems table and figure, feasibility figure, study summary figure and table |
-| Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps | spectrum of the Jacobian | tutorial geometry, first step, adaptive path, spectrum figures |
-| Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy | NR and FDXB with our own LU | timing, cost against robustness, per-case map, rescue histories |
-| Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules | golden-section tuning of delta | Tables 2 to 5 in LaTeX, fidelity plot, tuning figure |
-| Sadman | sparse LU counter, result types | Section 4.4, Figure 5 | Richardson step control, scaled homotopy, command-line tools | Gauss elimination and LU from scratch | shared figure style, Jacobian sparsity, Section 4.4 grid, Figure 5 cost, Richardson paths |
+| Member | Core code | Paper results reproduced | Improvements | Report |
+|---|---|---|---|---|
+| Jonayed | power flow model, test systems | flat-start check, base MVA finding | wider test bed, solution check, comparison study, feasibility maps | test-systems table and figure, feasibility figure, study summary figure and table |
+| Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps, spectrum of the Jacobian | tutorial geometry, first step, adaptive path, spectrum figures |
+| Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy, NR and FDXB with our own LU | timing, cost against robustness, per-case map, rescue histories |
+| Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules, golden-section tuning of delta | Tables 2 to 5 in LaTeX, fidelity plot, tuning figure |
+| Sadman | sparse LU counter, result types | Section 4.4, Figure 5 | Richardson step control, scaled homotopy, Gauss elimination and LU from scratch, command-line tool | shared figure style, Jacobian sparsity, Section 4.4 grid, Figure 5 cost, Richardson paths |
 
 ---
 
@@ -100,7 +100,7 @@ decide whether a result is right.
   paper's own numbers for these two cases do not fit a single base, so the base used is
   stated wherever it matters.
 
-### Improvements: test bed, solution check and comparison study
+### Improvements: test bed, solution check, comparison study and feasibility maps
 
 - `improvements/cases.py` adds 25 more test grids from the same Zenodo records (34 in
   total), so that changes to the method are tested on more than the paper's nine cases.
@@ -127,9 +127,7 @@ decide whether a result is right.
 
 - `run_all.py` runs all 15 experiments, or any selection of them.
 
-### Proposal feature: feasibility maps
-
-`extensions/feasibility.py` runs the paper's method on a grid of K and dt0 values and
+`improvements/feasibility.py` runs the paper's method on a grid of K and dt0 values and
 marks every cell as solved, wrong root or failed, using the solution check.
 `experiments/exp13_feasibility.py` draws the maps for four grids. The method works in a
 band along delta = K / dt0. For case36964 no setting with dt0 of 0.1 or more works, which
@@ -190,7 +188,7 @@ lets the improvements be switched on and off.
   for NR to converge in 4 iterations. Bus 6 ends at 1.0045 pu and 21.1 degrees, as in the
   paper.
 
-### Improvements: the switch framework, the corrector and adaptive steps
+### Improvements: the switch framework, the corrector, adaptive steps and the spectrum of the Jacobian
 
 - `improvements/solve.py` holds `Options` and `solve()`. `solve()` follows the path with
   any step rule and any homotopy function, then refines with NR or FDXB. The other
@@ -204,9 +202,7 @@ lets the improvements be switched on and off.
   study: 152 runs solved, none lost, and wrong roots drop from 14 to 2, for about 0.4
   more LUs per case. It also makes the result almost independent of dt0.
 
-### Proposal feature: the spectrum of the Jacobian
-
-`extensions/spectrum.py` estimates the largest eigenvalue modulus of J with the power
+`improvements/spectrum.py` estimates the largest eigenvalue modulus of J with the power
 method, and the smallest with inverse iteration (one LU of J, then the power method on
 J^-1). Shifted inverse iteration at -delta gives the smallest eigenvalue of J + delta I,
 the matrix used in the first homotopy step. `experiments/exp12_spectrum.py` runs this on
@@ -271,7 +267,7 @@ in the project that changes Newton's method itself.
   Euler followed by FDXB takes 66% to 93% of the NR time (paper: 57% to 85%), and
   followed by NR 102% to 122% (paper: 92% to 128%).
 
-### Improvements: the optimal multiplier and the Newton homotopy
+### Improvements: the optimal multiplier, the Newton homotopy and NR and FDXB with our own LU
 
 - `improvements/multiplier.py` scales every NR step by Iwamoto and Tamura's optimal
   multiplier (ref. 10). With a = g(x) and c = g(x + dx), the mismatch along the step is
@@ -283,9 +279,7 @@ in the project that changes Newton's method itself.
   classical Newton homotopy g(x) - (1 - t) g(x0). It solves only 75 of 170 runs. It has no
   K I term, which shows that this shift is what makes the paper's method work.
 
-### Proposal feature: NR and FDXB with our own LU
-
-`extensions/scratch.py` runs the paper's method (backward Euler path, then NR or FDXB)
+`improvements/scratch.py` runs the paper's method (backward Euler path, then NR or FDXB)
 with every linear system solved by Sadman's hand-written LU, and
 `experiments/exp15_scratch_lu.py` compares it with SciPy's sparse LU. On the 2x2 example
 and the 69- to 2000-bus grids it gives the same iterations and the same solution to
@@ -336,7 +330,7 @@ numbers next to the paper's, and studied the choice of integrator and of delta.
   run times for the 109,272-bus grid are within 13 percentage points of the paper in
   every row. RK2 with t3 = 0.20 fails on case36964, where the paper converges.
 
-### Improvements: other step rules
+### Improvements: other step rules and golden-section tuning of delta
 
 In `improvements/steps.py` Sizan added forward Euler, RK2 and RK4 as step rules, and
 BE-chord (backward Euler with three fixed-point iterations on one LU, the refinement the
@@ -348,9 +342,7 @@ paper suggests after equation 19).
   backward Euler is the best integrator. Under error control it still is the cheapest:
   10.6 LUs per case, against 37 for FE, 48 for RK2 and 87 for RK4.
 
-### Proposal feature: golden-section tuning of delta
-
-`extensions/tuning.py` finds delta, then dt0, by golden-section search, minimising the
+`improvements/tuning.py` finds delta, then dt0, by golden-section search, minimising the
 total number of LU factorizations. `experiments/exp14_tuning.py` tunes every grid, then
 fits two rules for choosing delta without a search on the paper's 9 grids and tests them
 on the other 25:
@@ -405,7 +397,7 @@ the tools that run any part of the project from the command line.
   With dt = 0.1 the homotopy hands NR a point of about 1.005 pu and 28 degrees at bus 6,
   and for every time step NR converges to 1.0045 pu and 21.1 degrees, as in the paper.
 
-### Improvements: Richardson step control, scaled homotopy and command-line tools
+### Improvements: Richardson step control, scaled homotopy, Gauss elimination and LU from scratch, and the command-line tool
 
 - `follow_path_richardson` in `improvements/path.py` chooses the step size by comparing
   one step of size dt with two steps of size dt / 2. Their difference estimates the local
@@ -419,18 +411,15 @@ the tools that run any part of the project from the command line.
   (129 of 170 runs).
 - `improvements/__main__.py` runs any combination of switches on any grid, for example
   `python -m improvements case36964 --corrector --multiplier`, and prints the result next
-  to the paper's method.
+  to the paper's method. It also runs each study on one grid, for example
+  `python -m improvements spectrum case18482`.
 
-### Proposal feature: Gauss elimination and LU from scratch
-
-- `extensions/gauss.py` implements Gauss elimination and LU factorization with partial
+- `improvements/gauss.py` implements Gauss elimination and LU factorization with partial
   pivoting, with forward and back substitution. Both agree with NumPy to about 1e-13.
   Hasbi's `scratch.py` uses this LU inside NR and FDXB.
 - The comparison at the end of `exp15_scratch_lu.py` shows that factorizing once and
   reusing the LU is 14 times faster than repeating Gauss elimination for 20 right-hand
   sides, which is why FDXB factorizes its matrices only once.
-- `extensions/__main__.py` runs each proposal feature on one grid, for example
-  `python -m extensions spectrum case18482`.
 
 ### Report: figure style, sparsity, Section 4.4, Figure 5 and Richardson paths
 
@@ -457,9 +446,8 @@ Everyone wrote the tests for their own code (24 tests in total):
 - `tests/test_core.py`: Jacobian check (Jonayed); pathway, first step and 2x2 example
   (Apurbo); NR and FDXB iteration counts (Hasbi); a regression row of Table 4 (Sizan).
 - `tests/test_improvements.py`: all switches off equals the paper's method, corrector and
-  adaptive steps (Apurbo); optimal multiplier (Hasbi); explicit first step (Sizan);
-  scaled and Newton homotopies (Sadman, Hasbi).
-- `tests/test_extensions.py`: power method and inverse iteration (Apurbo); NR with our own
-  LU (Hasbi); golden-section search (Sizan); Gauss elimination, LU, pivoting and
-  Richardson control (Sadman).
-- `tests/test_cli.py`: the command-line tools (Sadman).
+  adaptive steps, power method and inverse iteration (Apurbo); optimal multiplier and NR
+  with our own LU (Hasbi); explicit first step and golden-section search (Sizan); scaled
+  homotopy, Gauss elimination, LU, pivoting and Richardson control (Sadman); Newton
+  homotopy (Hasbi).
+- `tests/test_cli.py`: the command-line tool (Sadman).

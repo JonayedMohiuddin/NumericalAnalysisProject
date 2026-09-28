@@ -28,13 +28,11 @@ python -m improvements case18482 --multiplier --corrector
 python -m improvements case6024 --multiplier --richardson
 python -m improvements case36964 --dt0 0.1 --K 2e-3 --corrector --multiplier
 python -m improvements path/to/mycase.mat --corrector
-
-PROPOSAL FEATURES (one case)
-python -m extensions spectrum case18482
-python -m extensions spectrum case18482 --delta 0.02
-python -m extensions feasibility case6024
-python -m extensions tune case6024
-python -m extensions scratch case_ACTIVSg500limit
-python -m extensions scratch case_ACTIVSg500limit --refiner FDXB
-python -m extensions spectrum path/to/mycase.mat
+python -m improvements spectrum case18482
+python -m improvements spectrum case18482 --delta 0.02
+python -m improvements feasibility case6024
+python -m improvements tune case6024
+python -m improvements scratch case_ACTIVSg500limit
+python -m improvements scratch case_ACTIVSg500limit --refiner FDXB
+python -m improvements spectrum path/to/mycase.mat
 

@@ -10,7 +10,7 @@ J is, and how much the shift in the first step (eq. 25) improves it.
 import numpy as np
 import scipy.sparse.linalg as spla
 
-from extensions.spectrum import spectrum_summary
+from improvements.spectrum import spectrum_summary
 from improvements.cases import ALL, load
 
 from .common import write_table

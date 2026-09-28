@@ -243,7 +243,7 @@ at 18--30\% more factorizations. Four other ideas---a chord refinement of backwa
 suggests, fixed-step RK4, a Jacobian-scaled homotopy and the standard Newton homotopy---make things worse,
 and we explain why from the equations.
 
-Finally we carried out the numerical studies of our proposal: the spectrum of the flat-start Jacobian by
+Finally we carried out the numerical studies stated in our proposal presentation: the spectrum of the flat-start Jacobian by
 the power method and shifted inverse iteration, maps of where the method works in the $(K,\Delta t_0)$
 plane, golden-section tuning of the shift $\delta=K/\Delta t_0$, and Gauss elimination and LU
 factorization written from scratch. They show that $\delta$ matters only on the ill-conditioned grids,
@@ -320,14 +320,14 @@ in four iterations on a 109{,}272-bus grid. This project set out to answer four 
         edits the reproduced code, and an evaluation of 17 configurations on 34 systems $\times$ 5
         settings with LU factorizations as the cost unit and a check that each run reaches the reference
         operating point (\cref{sec:mods,sec:modresults}).
-  \item \textbf{\code{extensions}}, the numerical studies promised in our proposal: power method and
+  \item \textbf{The numerical studies} stated in our proposal presentation, in the same \code{improvements} package: power method and
         shifted inverse iteration for the Jacobian spectrum, $(K,\Delta t_0)$ feasibility maps,
         golden-section tuning of $\delta$, and Gauss elimination and LU with partial pivoting written from
         scratch (\cref{sec:proposal}).
   \item \textbf{A failure analysis} explaining from the equations why each unsuccessful modification
         fails (\cref{sec:failure}).
-  \item \textbf{Two command-line tools}, \code{python -m improvements} and \code{python -m extensions},
-        that run any modification or study on any of the 34 systems.
+  \item \textbf{A command-line tool}, \code{python -m improvements}, that runs any modification or study
+        on any of the 34 systems.
 \end{itemize}
 
 \begin{figure}[!htbp]
@@ -568,7 +568,7 @@ the paper's method bit for bit.
   \node[box=navy,text width=3.3cm] (hom) at (1.8,1.4) {\textbf{homotopy/}\\ fpv: $G,\ G_x,\ G_t$\\ integrators: FE, BE, RK2\\ pathway, dynamic};
   \node[box=navy,text width=3.3cm] (sol) at (5.4,1.4) {\textbf{solvers/}\\ newton: NR\\ fdxb: fast decoupled XB\\ gsh: static homotopy};
   \node[box=sage,text width=2.75cm] (impm) at (9.35,1.4) {\textbf{improvements/}\\ multiplier, steps, path (adaptive, Richardson), homotopies, cases + reference roots};
-  \node[box=coral,text width=2.75cm] (ext) at (12.45,1.4) {\textbf{extensions/}\\ gauss (own LU), scratch, spectrum, feasibility, tuning};
+  \node[box=coral,text width=2.75cm] (ext) at (12.45,1.4) {\textbf{improvements/} studies\\ gauss (own LU), scratch, spectrum, feasibility, tuning};
   % row 1: problem
   \node[box=sky,text width=6.9cm] (prob) at (3.6,0.0) {\textbf{problem.py}\ \ \code{NonlinearProblem}: \code{g(x)}, \code{jacobian(x)}\\ \code{TutorialProblem}\quad$\cdot$\quad \code{PowerFlowProblem}};
   \node[box=sky,text width=5.9cm] (pf) at (10.9,0.0) {\textbf{powerflow/}\ \ case: read .mat, renumber, bus types\\ network: $Y_{\mathrm{bus}}$, $S_{\mathrm{bus}}$, $B'$, $B''$\ \ model: $g$, $J$};
@@ -1150,7 +1150,7 @@ not affect any of its tables.
 \section{Our Modifications}\label{sec:mods}
 
 \subsection{From proposal to implementation}
-Our course proposal, written before any code, promised RK4 and Richardson-controlled steps for the path, a
+Our course proposal, a presentation given before any code was written, promised RK4 and Richardson-controlled steps for the path, a
 spectral study of the flat-start Jacobian, maps of the feasible $(K,\Delta t_0)$ region, golden-section
 tuning and linear solvers written from scratch. All of them are now in the repository
 (\cref{fig:proposal}); the spectral, feasibility, tuning and linear-solver studies are reported in
@@ -1176,14 +1176,14 @@ doubling rather than an embedded pair, so it works with any of the step rules.
   \node[p] (p6) at (0,-5) {Spectrum of $J$ at the flat start (power method, shifted inverse iteration); predict $\delta$};
   \node[p] (p7) at (0,-6) {Golden-section search minimising LUs};
   \node[b=sage] (b1) at (8.4,0)  {exp01--exp10, every table and figure};
-  \node[b=sage] (b2) at (8.4,-1) {\code{newton.py}, \code{fdxb.py}, \code{LUCounter}; own Gauss / LU in \code{extensions/gauss.py} (exp15)};
+  \node[b=sage] (b2) at (8.4,-1) {\code{newton.py}, \code{fdxb.py}, \code{LUCounter}; own Gauss / LU in \code{improvements/gauss.py} (exp15)};
   \node[b=sage] (b3) at (8.4,-2) {\code{step="RK4"}, fixed steps and under Richardson control};
   \node[b=skyblue] (b4) at (8.4,-3) {\code{richardson=True} (step doubling, any step rule); also \code{adaptive=True}};
   \node[b=sage] (b5) at (8.4,-4) {exp13: $8\times11$ grid on four systems};
   \node[b=sage] (b6) at (8.4,-5) {exp12 on all 34 systems; spectral rule for $\delta$ tested in exp14};
-  \node[b=sage] (b7) at (8.4,-6) {\code{extensions/tuning.py}, exp14: $\delta$, then $\Delta t_0$};
+  \node[b=sage] (b7) at (8.4,-6) {\code{improvements/tuning.py}, exp14: $\delta$, then $\Delta t_0$};
   \foreach \i/\c in {1/sage,2/sage,3/sage,4/skyblue,5/sage,6/sage,7/sage} \draw[lk=\c] (p\i.east) -- (b\i.west);
-  \node[b=navy,text width=5.6cm] (x1) at (8.4,-7.4) {\textbf{Not in the proposal, added:} Iwamoto optimal multiplier, Newton corrector, BE-chord, scaled and Newton homotopies, 25 extra test systems, check of the root reached, two command-line tools};
+  \node[b=navy,text width=5.6cm] (x1) at (8.4,-7.4) {\textbf{Not in the proposal, added:} Iwamoto optimal multiplier, Newton corrector, BE-chord, scaled and Newton homotopies, 25 extra test systems, check of the root reached, a command-line tool};
   \node[font=\sffamily\scriptsize,anchor=west] at (-2.8,-7.4) {\textcolor{sage}{\rule{6pt}{6pt}} as proposed\quad \textcolor{skyblue}{\rule{6pt}{6pt}} changed form\quad \textcolor{navy}{\rule{6pt}{6pt}} added};
 \end{tikzpicture}
 \caption[From proposal to implementation]{What the proposal promised and what the repository contains.}
@@ -1553,15 +1553,16 @@ navy square path is the paper's fixed path, which ends at the same point as the 
 % ============================================================================ 9 PROPOSAL STUDIES
 \section{The Proposal's Numerical Studies}\label{sec:proposal}
 
-Our proposal promised four numerical studies around the paper's central parameter, the shift
-$\delta=K/\Delta t_0$ of the first step. They live in the \code{extensions} package, each has its own
-experiment (exp12--exp15), and each can be run on any system from the command line:
+Our proposal presentation stated four numerical studies around the paper's central parameter, the shift
+$\delta=K/\Delta t_0$ of the first step. Like the modifications of \cref{sec:mods}, they build on the paper's
+method, so they live in the same \code{improvements} package and run through the same command. Each has
+its own experiment (exp12--exp15) and can be run on any system:
 \begin{codebox}{Listing 3 \quad The proposal studies from the command line}
 \begin{lstlisting}[language=bash,basicstyle=\ttfamily\footnotesize,numbers=none,columns=fullflexible]
-python -m extensions spectrum case18482         # power method and inverse iteration
-python -m extensions feasibility case6024       # (K, dt0) map as text
-python -m extensions tune case6024              # golden-section search for delta and dt0
-python -m extensions scratch case_ACTIVSg500limit --refiner FDXB   # our own LU
+python -m improvements spectrum case18482   # power method and inverse iteration
+python -m improvements feasibility case6024 # (K, dt0) map as text
+python -m improvements tune case6024        # golden-section search for delta and dt0
+python -m improvements scratch case_ACTIVSg500limit --refiner FDXB   # our own LU
 \end{lstlisting}
 \end{codebox}
 
@@ -1688,11 +1689,11 @@ golden search per system (21 solves) & 9 of 9 & 4.89 & \textbf{23 of 25} & 9.13 
 \end{table}
 
 \subsection{Linear solvers written from scratch}\label{sec:ownlu}
-\paragraph{Method} \code{extensions/gauss.py} implements Gauss elimination with partial pivoting and
+\paragraph{Method} \code{improvements/gauss.py} implements Gauss elimination with partial pivoting and
 back substitution, and a Doolittle LU factorization with partial pivoting, $PA=LU$, with $L$ (unit diagonal)
 and $U$ stored in one array and the row permutation as an index vector, followed by forward and back
 substitution. The row updates are vectorised, but both methods work on dense arrays and cost
-$\mathcal{O}(n^3)$. \code{extensions/scratch.py} repeats the paper's BE path, NR and FDXB with every linear
+$\mathcal{O}(n^3)$. \code{improvements/scratch.py} repeats the paper's BE path, NR and FDXB with every linear
 system solved this way, step for step as in \code{dynhomotopy}, so the two can be compared one to one.
 
 \paragraph{What it shows} On the tutorial and on the limit cases of 69 to 2{,}000 buses, our LU gives
@@ -2008,7 +2009,7 @@ python run_all.py                          # every experiment (1-15)
 python run_all.py --only 3 4               # selected experiments
 python -m experiments.exp11_improvements --configs PC "OM + PC" richardson
 python -m improvements --help              # any modification on any of the 34 systems
-python -m extensions spectrum case18482    # any proposal study on any system
+python -m improvements spectrum case18482   # any proposal study on any system
 python report/scripts/figures_from_results.py   # report figures from results/tables
 python report/scripts/figures_from_code.py      # report figures that call the solvers
 \end{lstlisting}

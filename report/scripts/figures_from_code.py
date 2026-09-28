@@ -278,7 +278,7 @@ def fig_richardson():
 
 def fig_feasibility():
     """(K, dt0) maps of the paper's method on four cases, in the report's style (cached)."""
-    from extensions.feasibility import DT0_VALUES, K_VALUES, feasibility_grid
+    from improvements.feasibility import DT0_VALUES, K_VALUES, feasibility_grid
     cases = ["case18482", "case36964", "case6024", "case_ACTIVSg2000limit"]
     cache = GEN / "feasibility.json"
     grids = json.loads(cache.read_text()) if cache.exists() else {}

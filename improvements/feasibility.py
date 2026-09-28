@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from improvements import solve
-from improvements.cases import on_reference
+from .solve import solve
+from .cases import on_reference
 
 FAILED, OTHER_ROOT, SOLVED = 0, 1, 2
 DT0_VALUES = [0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.2]

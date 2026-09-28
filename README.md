@@ -8,8 +8,8 @@ Models", Energies 17(18):4642, 2024. doi:10.3390/en17184642
 
 The paper is in `energies-17-04642-v3.pdf`. We rerun every table and figure of the
 paper. Most results match closely; the ones that do not are listed under "Differences".
-On top of that we test changes to the method (`improvements/`) and implement the
-numerical parts of our project proposal (`extensions/`).
+On top of that we test changes to the method and study it with the numerical techniques
+of our project proposal, all in `improvements/`.
 
 ## Running
 
@@ -21,7 +21,7 @@ python -m experiments.exp03_tables2to4      # a single experiment
 python -m pytest tests
 ```
 
-Both `python -m improvements` and `python -m extensions` also take a path to any
+`python -m improvements` also takes a path to any
 MATPOWER case saved as a `.mat` file (a struct named `mpc`) in place of a case name,
 for example `python -m improvements mycase.mat --corrector`.
 
@@ -50,13 +50,13 @@ The three changes that help are `--corrector`, `--multiplier` and `--richardson`
 tested. `--adaptive` and `--richardson` cannot be combined, since both choose the time
 points.
 
-The proposal features run the same way:
+The studies of the method run through the same command:
 
 ```
-python -m extensions spectrum case18482       # power method and inverse iteration
-python -m extensions feasibility case6024     # (K, dt0) map as text
-python -m extensions tune case6024            # golden-section search for delta and dt0
-python -m extensions scratch case_ACTIVSg500limit --refiner FDXB   # our own LU
+python -m improvements spectrum case18482       # power method and inverse iteration
+python -m improvements feasibility case6024     # (K, dt0) map as text
+python -m improvements tune case6024            # golden-section search for delta and dt0
+python -m improvements scratch case_ACTIVSg500limit --refiner FDXB   # our own LU
 ```
 
 To repeat the study for some configurations only (the paper's method is always added,
@@ -109,14 +109,13 @@ dynhomotopy/            the paper's method, nothing else
     integrators.py      FE, BE, RK2 and the linearised first step
     pathway.py          the time points t_k
     dynamic.py          runs the integration along the path
-improvements/           changes to the method, each behind a switch (see "Improvements")
+improvements/           changes to the method, each behind a switch, and studies of it
   solve.py              solve() and the Options switches
   multiplier.py         NR with Iwamoto's optimal multiplier
   steps.py              step rules (BE-chord, FE, RK2, RK4) and the Newton corrector
   homotopies.py         the scaled and the Newton homotopy
   path.py               fixed, adaptive and Richardson-controlled time points
   cases.py              the wider test bed of 34 cases and their reference solutions
-extensions/             the numerical parts of our proposal (see "Proposal features")
   gauss.py              Gauss elimination and LU with partial pivoting, from scratch
   scratch.py            BE path, NR and FDXB using that LU
   spectrum.py           power method and shifted inverse iteration
@@ -133,7 +132,7 @@ system go through the same code.
 The power flow model itself (reading a case, building Ybus and Sbus, the derivatives
 for the Jacobian) comes from PYPOWER, a Python port of MATPOWER. It contains no solving,
 only formulas. Every numerical method (NR, FDXB, the homotopy, the integrators, the LU
-counting and everything in `improvements/` and `extensions/`) is our own code.
+counting and everything in `improvements/`) is our own code.
 
 | Result | Script | Output |
 |---|---|---|
@@ -311,12 +310,12 @@ case2736splimit it converges in 11 NR iterations if allowed more than 10).
 
 ## Proposal features
 
-Our proposal promised a spectral study of the Jacobian, maps of where the method works
+Our proposal presentation stated a spectral study of the Jacobian, maps of where the method works
 in the (K, dt0) plane, golden-section tuning, Richardson-controlled steps (see
 "Improvements") and linear solvers written from scratch. All of them are implemented;
-this is what they showed.
+they are part of `improvements/` and this is what they showed.
 
-**Spectrum** (`extensions/spectrum.py`, `exp12`). At the flat start the eigenvalue of J
+**Spectrum** (`improvements/spectrum.py`, `exp12`). At the flat start the eigenvalue of J
 closest to zero is 4e-4 to 6e-3 on the twelve ill-conditioned cases, and 0.01 to 1.9 on
 most limit cases (the two limit cases built from the 9241- and 13659-bus grids are
 lower). The largest is 3e4 to 5e4 on the large grids, so the ratio
@@ -336,7 +335,7 @@ or 0.2 works. This is why the paper found that dt0 = 0.1 with K = 0.002 fails ev
 delta is unchanged. For case6024 the band lies at larger delta (0.03 to 32), and the
 paper's delta = 0.02 line runs along its edge, where runs reach other roots.
 
-**Tuning delta** (`extensions/tuning.py`, `exp14`). Golden-section search over
+**Tuning delta** (`improvements/tuning.py`, `exp14`). Golden-section search over
 log10(delta), then over log10(dt0), minimising total LUs, needs 21 solves per case.
 The tuned values show that the paper's delta suits some of its own cases (0.025 on
 case27318, case54636 and case109272) but is far too small for the other ill-conditioned
@@ -354,7 +353,7 @@ The spectral rule does not work. On the ill-conditioned cases the tuned delta is
 matters at all. The rule loses four training cases. Searching
 each case solves four more test cases, but the search itself costs about 21 solves.
 
-**Own linear solvers** (`extensions/gauss.py`, `extensions/scratch.py`, `exp15`). The
+**Own linear solvers** (`improvements/gauss.py`, `improvements/scratch.py`, `exp15`). The
 paper's method with our dense LU with partial pivoting gives the same iterations as
 with SciPy's sparse LU and the same solution to 5e-12, on the tutorial and the 69- to
 2000-bus cases. It is much slower (424 s against 0.04 s for NR on the 2000-bus case),

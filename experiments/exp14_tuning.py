@@ -2,7 +2,7 @@
 
 1. For every case, golden-section search over log10(delta) (dt0 = 0.005),
    then over log10(dt0), minimising the total LU factorizations of the
-   paper's method (extensions/tuning.py).
+   paper's method (improvements/tuning.py).
 2. Two rules for choosing delta without a search are fitted on the paper's
    9 cases and tested on the 25 other cases:
      fixed rule     delta = geometric mean of the tuned deltas
@@ -16,8 +16,8 @@
 import numpy as np
 
 from dynhomotopy.datasets import ALL as PAPER_CASES
-from extensions.spectrum import inverse_iteration
-from extensions.tuning import tune
+from improvements.spectrum import inverse_iteration
+from improvements.tuning import tune
 from improvements import solve
 from improvements.cases import EXTRA, load, on_reference
 

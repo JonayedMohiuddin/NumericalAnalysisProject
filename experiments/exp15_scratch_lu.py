@@ -1,7 +1,7 @@
 """Proposal: NR and FDXB with our own Gauss elimination / LU with partial pivoting.
 
 The paper's method is run twice on the smaller systems, once with SciPy's
-sparse LU (SuperLU) and once with the dense LU written in extensions/gauss.py.
+sparse LU (SuperLU) and once with the dense LU written in improvements/gauss.py.
 The iterations and the solution should be the same. The run times show why
 a sparse LU is needed for large grids.
 """
@@ -12,8 +12,8 @@ import numpy as np
 
 from dynhomotopy.hybrid import solve_hybrid
 from dynhomotopy.problem import TutorialProblem
-from extensions import scratch
-from extensions.gauss import gauss_solve, lu_factor, lu_solve
+from improvements import scratch
+from improvements.gauss import gauss_solve, lu_factor, lu_solve
 from improvements.cases import load
 
 from .common import write_table
