@@ -4,9 +4,11 @@ python run_all.py --reps 20
 python run_all.py --only 3 4
 
 BASE PAPER
+python -m improvements path/to/mycase.mat
 python run_all.py --only 1 2 3 4 5 6 7 8 9 10
 
 IMPROVEMENTS
+python -m improvements path/to/mycase.mat
 python -m improvements case18482
 python -m improvements case18482 --multiplier
 python -m improvements case18482 --corrector
@@ -27,12 +29,11 @@ python -m improvements case18482 --dt0 0.005 --K 1e-4
 python -m improvements case18482 --multiplier --corrector
 python -m improvements case6024 --multiplier --richardson
 python -m improvements case36964 --dt0 0.1 --K 2e-3 --corrector --multiplier
-python -m improvements path/to/mycase.mat --corrector
 python -m improvements spectrum case18482
 python -m improvements spectrum case18482 --delta 0.02
 python -m improvements feasibility case6024
 python -m improvements tune case6024
 python -m improvements scratch case_ACTIVSg500limit
 python -m improvements scratch case_ACTIVSg500limit --refiner FDXB
-python -m improvements spectrum path/to/mycase.mat
+
 
