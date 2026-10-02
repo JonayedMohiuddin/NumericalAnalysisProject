@@ -53,22 +53,31 @@ As a team we did five things:
 
 ## Who did what
 
-The table gives an overview. The sections below explain each member's work in full.
+All five members contributed equally. Every member owns one part of the core
+code, one part of the paper's results, one improvement and one numerical study from the
+proposal, the report figures and tables built from that work, and the tests for their own
+code. The table gives an overview, by roll number. The sections below explain each
+member's work in full.
 
-| Member | Core code | Paper results reproduced | Improvements | Report |
-|---|---|---|---|---|
-| Jonayed | power flow model, test systems | flat-start check, base MVA finding | wider test bed, solution check, comparison study, feasibility maps | test-systems table and figure, feasibility figure, study summary figure and table |
-| Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps, spectrum of the Jacobian | tutorial geometry, first step, adaptive path, spectrum figures |
-| Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy, NR and FDXB with our own LU | timing, cost against robustness, per-case map, rescue histories |
-| Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules, golden-section tuning of delta | Tables 2 to 5 in LaTeX, fidelity plot, tuning figure |
-| Sadman | sparse LU counter, result types | Section 4.4, Figure 5 | Richardson step control, scaled homotopy, Gauss elimination and LU from scratch, command-line tool | shared figure style, Jacobian sparsity, Section 4.4 grid, Figure 5 cost, Richardson paths |
+| Roll | Member | Core code | Paper results reproduced | Improvements and studies | Report |
+|---|---|---|---|---|---|
+| 2105039 | Sizan | table output, timing benchmark | Tables 2 to 6, Figure 3 | FE, RK2, RK4 and BE-chord step rules; golden-section tuning of delta | Tables 2 to 5 in LaTeX, fidelity plot, tuning figure |
+| 2105040 | Sadman | sparse LU counter, result types, figure style | Section 4.4, Figure 5 | Richardson step control, scaled homotopy; Gauss elimination and LU from scratch; command-line tool | Jacobian sparsity, Section 4.4 grid, Figure 5 cost, Richardson paths |
+| 2105057 | Apurbo | homotopy, integrators, hybrid method | Figures 1, 2, 4, Section 4.2.1 | `solve()` with switches, Newton corrector, adaptive steps; spectrum of the Jacobian | tutorial geometry, first step, adaptive path, spectrum figures |
+| 2105058 | Hasbi | NR, FDXB, GSH-NR | Tables 7, 8 | optimal multiplier, Newton homotopy; NR and FDXB with our own LU | timing, cost against robustness, per-case map, rescue histories |
+| 2105060 | Jonayed | power flow model, test systems, experiment runner | flat-start check and base MVA finding, root check of Table 7, audit of the paper | wider test bed, solution (root) check, the comparison study of all changes; feasibility maps | test-systems table and figure, audit table, feasibility figure, study summary figure and table |
 
 ---
 
 ## Jonayed
 
-Jonayed built the power flow model that every other part runs on, and the checks that
-decide whether a result is right.
+Jonayed built the power flow model that every other part runs on, the checks that decide
+whether a result is right, and the study that compares every member's changes. His root
+check is behind the project's main finding: that 14 of the paper's 141 converged runs on
+the wider test bed reach the wrong solution. He also set up and maintains the project's
+public GitHub repository, where the code of all five members comes together, and his
+`g(x)` / `jacobian(x)` interface is what every other member's solver, integrator and
+modification is written against.
 
 ### Core code: the power flow model
 
@@ -99,6 +108,15 @@ decide whether a result is right.
   while the paper's numbers for Tables 2 to 5 only come out on a 100 MVA base. The
   paper's own numbers for these two cases do not fit a single base, so the base used is
   stated wherever it matters.
+- `experiments/exp09_table7.py` marks every converged run of Table 7 that reaches a
+  different root, using his solution check; none does, so the Table 7 counts are not
+  inflated by wrong roots.
+- The audit of the paper: Jonayed collected the eight places where the paper is
+  inconsistent or under-specified (his base MVA finding, Hasbi's FDXB count for
+  case109272, Apurbo's eps = 0.05 curve, Sizan's Table 2 cell and Table 6 run, Sadman's
+  Section 4.4 paths, the GSH-NR description and the case2000limit mismatch), checked each
+  against our own code first, and wrote the audit table of the report with the evidence
+  and our handling of each.
 
 ### Improvements: test bed, solution check, comparison study and feasibility maps
 
@@ -125,7 +143,8 @@ decide whether a result is right.
   | multiplier (Hasbi) | 143 | 12 | 7.14 |
   | multiplier + Richardson (Sadman) | 156 | 8 | 9.75 |
 
-- `run_all.py` runs all 15 experiments, or any selection of them.
+- `run_all.py` runs all 15 experiments, or any selection of them, so the whole project
+  can be reproduced with one command.
 
 `improvements/feasibility.py` runs the paper's method on a grid of K and dt0 values and
 marks every cell as solved, wrong root or failed, using the solution check.
@@ -384,7 +403,7 @@ the tools that run any part of the project from the command line.
   used across the whole project.
 - `dynhomotopy/results.py` defines the result types (solver result, homotopy path,
   combined result) that all solvers return.
-- `experiments/plots.py` holds the common figure style.
+- `experiments/plots.py` holds the common figure style of the experiment plots.
 
 ### Paper results
 

@@ -1,0 +1,32 @@
+Report Template & Format Link: https://www.overleaf.com/latex/templates/acm-conference-proceedings-master-template/pnrfvrrdbfwt
+
+
+1. Mandatory Structure & Contents
+Your final report must follow the template provided in the link above and include the following sections:
+
+Title: Project Title, Group Number, Section, and Member Details (Names, IDs).
+
+Abstract: A concise summary (150–250 words) of the problem, methods used, key results, and findings.
+
+Introduction & Base Paper Review: Overview of the background, citation and summary of the selected base paper, and the core objective of your work.
+
+Methodology: Detailed explanation of the numerical methods, algorithms, or simulation models implemented.
+
+Implementation & Experiments: Descriptions of the simulation setup, algorithms, parameter choices, and datasets/benchmarks used.
+
+Results & Discussion: Visualizations (plots, graphs, tables), output analysis, performance metrics, and comparison against baseline expectations or the base paper.
+
+Conclusion & Future Work: Key takeaways, limitations of your current approach, and potential directions for future expansion.
+
+References: Proper citations for the base paper, datasets, libraries, and external resources used.
+
+2. Submission Rules & Formatting Guidelines
+File Format: Submit PDF format only (.pdf). Source files (LaTeX zip) do not need to be submitted unless explicitly requested.
+
+File Naming Convention: Name your file using the format:
+
+<SectionX>_<GroupY>.pdf (Example: A_05.pdf)
+
+Submission Portal: Submit via Moodle (Final Report Submission) by the designated deadline. Only one submission is required per group. Contact person mentioned in the form must submit.
+
+Code Submission: Include a link to a clean, well-documented public GitHub repository containing your code implementation in the report.
